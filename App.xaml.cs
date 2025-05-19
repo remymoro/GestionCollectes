@@ -1,13 +1,48 @@
-﻿using System.Configuration;
-using System.Data;
+﻿using System;
 using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using GestionCollectes.Infrastructure.Data;
+using GestionCollectes.Domain.Entities;
+using GestionCollectes.Domain.Interfaces;
+using GestionCollectes.Infrastructure.Repositories;
+using GestionCollectes.ApplicationLayer.Services;
 
-namespace GestionCollectes;
 
-/// <summary>
-/// Interaction logic for App.xaml
-/// </summary>
-public partial class App : Application
+
+namespace GestionCollectes
 {
-}
+    public partial class App : Application
+    {
+        public static IServiceProvider ServiceProvider { get; private set; }
 
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            var services = new ServiceCollection();
+
+            var connectionString = "server=localhost;port=3306;database=projet_restos_coeur;user=restos;password=restos123;SslMode=none;";
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+            // Ajoute ici tous tes services avant BuildServiceProvider
+            services.AddScoped<IRepository<Collecte>, CollecteRepository>();
+            services.AddScoped<CollecteService>(); // <-- AJOUTE CETTE LIGNE !
+
+            // Ici tu construis le conteneur DI
+            ServiceProvider = services.BuildServiceProvider();
+
+            base.OnStartup(e);
+        }
+
+
+
+
+
+
+
+
+
+
+    }
+}
