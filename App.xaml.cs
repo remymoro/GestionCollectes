@@ -16,7 +16,7 @@ namespace GestionCollectes
     {
         public static IServiceProvider ServiceProvider { get; private set; }
 
-
+        public static GestionCollectes.Domain.Entities.Utilisateur? UtilisateurCourant { get; set; }
         protected override void OnStartup(StartupEventArgs e)
         {
             var services = new ServiceCollection();
@@ -28,9 +28,15 @@ namespace GestionCollectes
             // Ajoute ici tous tes services avant BuildServiceProvider
             services.AddScoped<IRepository<Collecte>, CollecteRepository>();
             services.AddScoped<CollecteService>(); // <-- AJOUTE CETTE LIGNE !
-
+            services.AddScoped<IRepository<Utilisateur>, UtilisateurRepository>();
+            services.AddScoped<UtilisateurService>();
             // Ici tu construis le conteneur DI
             ServiceProvider = services.BuildServiceProvider();
+
+            var login = new Presentation.Views.LoginWindow();
+            login.Show();
+
+
 
             base.OnStartup(e);
         }

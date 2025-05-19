@@ -11,10 +11,9 @@
   <ItemGroup>
     <Folder Include="ApplicationLayer\DTOs\" />
     <Folder Include="ApplicationLayer\UseCases\" />
-    <Folder Include="Domain\Enums\" />
     <Folder Include="Infrastructure\Logging\" />
     <Folder Include="Presentation\Resources\" />
-    <Folder Include="Presentation\Views\" />
+    <Folder Include="Presentation\Views\Shared\" />
     <Folder Include="Tests\Integration\" />
     <Folder Include="Tests\Unit\" />
   </ItemGroup>

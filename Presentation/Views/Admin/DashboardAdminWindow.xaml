@@ -1,0 +1,15 @@
+﻿<Window x:Class="GestionCollectes.Presentation.Views.Admin.DashboardAdminWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DashboardAdminWindow" Height="450" Width="800">
+    <Grid>
+        <TextBlock x:Name="BienvenueTextBlock"
+                   FontSize="22"
+                   FontWeight="Bold"
+                   Margin="24,20,24,10"
+                   HorizontalAlignment="Center"
+                   Text="Bienvenue !" />
+        <!-- Place d’autres contrôles ici -->
+    </Grid>
+</Window>
+
