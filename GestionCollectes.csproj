@@ -9,13 +9,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Tests.Unit\**" />
+    <Compile Remove="Tests\**" />
+    <EmbeddedResource Remove="Tests.Unit\**" />
+    <EmbeddedResource Remove="Tests\**" />
+    <None Remove="Tests.Unit\**" />
+    <None Remove="Tests\**" />
+    <Page Remove="Tests.Unit\**" />
+    <Page Remove="Tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="ApplicationLayer\DTOs\" />
     <Folder Include="ApplicationLayer\UseCases\" />
     <Folder Include="Infrastructure\Logging\" />
     <Folder Include="Presentation\Resources\" />
     <Folder Include="Presentation\Views\Shared\" />
-    <Folder Include="Tests\Integration\" />
-    <Folder Include="Tests\Unit\" />
   </ItemGroup>
 
   <ItemGroup>
