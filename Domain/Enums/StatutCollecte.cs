@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace GestionCollectes.Domain.Enums
 {
-    public enum RoleUtilisateur
-    {
+   
+        public enum StatutCollecte
+        {
+            Planifiee,
+            EnCours,
+            Terminee,
+            Annulee
+        }
 
-        SiegeAdmin,
-        Centre,
-        Utilisateur
-    }
+
 }

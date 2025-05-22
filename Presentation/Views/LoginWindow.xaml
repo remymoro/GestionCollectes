@@ -5,7 +5,6 @@
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         ResizeMode="NoResize"
-        WindowStyle="None"
         
         >
 

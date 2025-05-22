@@ -12,6 +12,7 @@ namespace GestionCollectes.Infrastructure.Data
     {
         public DbSet<Collecte> Collectes { get; set; }
         public DbSet<Utilisateur> Utilisateurs { get; set; }
+        public DbSet<Centre> Centres { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

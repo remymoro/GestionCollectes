@@ -30,6 +30,12 @@ namespace GestionCollectes
             services.AddScoped<CollecteService>(); // <-- AJOUTE CETTE LIGNE !
             services.AddScoped<IRepository<Utilisateur>, UtilisateurRepository>();
             services.AddScoped<UtilisateurService>();
+
+
+
+            services.AddScoped<IRepository<Centre>, CentreRepository>();
+            services.AddScoped<CentreService>();
+
             // Ici tu construis le conteneur DI
             ServiceProvider = services.BuildServiceProvider();
 

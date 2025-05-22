@@ -10,22 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
-using GestionCollectes.Presentation.ViewModels.Admin;
-
-
 
 namespace GestionCollectes.Presentation.Views.Admin
 {
     /// <summary>
-    /// Logique d'interaction pour DashboardAdminWindow.xaml
+    /// Logique d'interaction pour UtilisateursView.xaml
     /// </summary>
-    public partial class DashboardAdminWindow : Window
+    public partial class UtilisateursView : UserControl
     {
-        public DashboardAdminWindow()
+        public UtilisateursView()
         {
             InitializeComponent();
-            DataContext = new DashboardAdminViewModel();
         }
     }
 }

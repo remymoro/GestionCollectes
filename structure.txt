@@ -1,0 +1,70 @@
+﻿|-- ApplicationLayer
+   |-- Services
+      |-- CentreService.cs
+      |-- CollecteService.cs
+      |-- UtilisateurService.cs
+|-- Domain
+   |-- Entities
+      |-- Centre.cs
+      |-- Collecte.cs
+      |-- Utilisateur.cs
+   |-- Enums
+      |-- RoleUtilisateur.cs
+      |-- StatutCollecte.cs
+   |-- Interfaces
+      |-- IRepository.cs
+|-- Infrastructure
+   |-- Data
+      |-- AppDbContext.cs
+      |-- DesignTimeDbContextFactory.cs
+   |-- Repositories
+      |-- CentreRepository.cs
+      |-- CollecteRepository.cs
+      |-- UtilisateurRepository.cs
+|-- Presentation
+   |-- Converters
+      |-- NullToBoolConverter.cs
+   |-- Resources
+      |-- Styles.xaml
+   |-- ViewModels
+      |-- Admin
+         |-- CentresViewModel.cs
+         |-- DashboardAdminViewModel.cs
+         |-- UtilisateursViewModel.cs
+      |-- CollecteViewModel.cs
+      |-- LoginViewModel.cs
+      |-- RelayCommand.cs
+   |-- Views
+      |-- Admin
+         |-- CentresView.xaml
+         |-- CentresView.xaml.cs
+         |-- CollectesView.xaml
+         |-- CollectesView.xaml.cs
+         |-- DashboardAdminWindow.xaml
+         |-- DashboardAdminWindow.xaml.cs
+         |-- UtilisateursView.xaml
+         |-- UtilisateursView.xaml.cs
+      |-- Centre
+         |-- DashboardCentreWindow.xaml
+         |-- DashboardCentreWindow.xaml.cs
+      |-- Utilisateur
+         |-- DashboardUtilisateurWindow.xaml
+         |-- DashboardUtilisateurWindow.xaml.cs
+      |-- LoginWindow.xaml
+      |-- LoginWindow.xaml.cs
+|-- Tests.Unit
+   |-- CollecteServiceTests.cs
+   |-- Tests.Unit.csproj
+   |-- UnitTest1.cs
+   |-- UtilisateurServiceTests.cs
+|-- .gitattributes
+|-- .gitignore
+|-- App.xaml
+|-- App.xaml.cs
+|-- AssemblyInfo.cs
+|-- GestionCollectes.csproj
+|-- GestionCollectes.csproj.user
+|-- GestionCollectes.sln
+|-- MainWindow.xaml
+|-- MainWindow.xaml.cs
+|-- structure.txt

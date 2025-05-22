@@ -1,19 +1,24 @@
-﻿using GestionCollectes.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using GestionCollectes.Domain.Enums;
 
 namespace GestionCollectes.Domain.Entities
 {
-    public class Utilisateur
+    public partial class Utilisateur : ObservableObject
     {
-        public int Id { get; set; }
-        public string Nom { get; set; } = string.Empty;
-        public string MotDePasseHash { get; set; } = string.Empty;
-        public RoleUtilisateur Role { get; set; }
-        public int? CentreId { get; set; }           // Optionnel, si tu veux rattacher un centre plus tard
-        // public Centre? Centre { get; set; }       // Navigation si besoin (à ajouter si Centre existe déjà)
+        [ObservableProperty]
+        private int id;
+
+        [ObservableProperty]
+        private string nom = string.Empty;
+
+        [ObservableProperty]
+        private string motDePasseHash = string.Empty;
+
+        [ObservableProperty]
+        private RoleUtilisateur role = RoleUtilisateur.Centre; // valeur par défaut !
+
+
+        [ObservableProperty]
+        private int? centreId;
     }
 }
