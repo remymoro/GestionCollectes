@@ -13,6 +13,9 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
         public CollecteViewModel CollectesVM { get; }
         public CentresViewModel CentresVM { get; }
         public UtilisateursViewModel UtilisateursVM { get; }
+
+        public MagasinsActifsViewModel MagasinsActifsVM { get; }
+
         public MagasinsViewModel MagasinsVM { get; }
 
         [ObservableProperty]
@@ -28,6 +31,7 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
             var centreService1 = App.ServiceProvider.GetRequiredService<CentreService>();
             var centreService2 = App.ServiceProvider.GetRequiredService<CentreService>();
             var magasinService = App.ServiceProvider.GetRequiredService<MagasinService>();
+            MagasinsActifsVM = new MagasinsActifsViewModel(magasinService, centreService2);
 
             CollectesVM = new CollecteViewModel(collecteService);
             CentresVM = new CentresViewModel(centreService1);
@@ -56,10 +60,14 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
                 case "Magasins":
                     CurrentView = MagasinsVM;
                     break;
+                case "MagasinsActifs": // Ajout du bouton magasins actifs
+                    CurrentView = MagasinsActifsVM;
+                    break;
                 default:
                     CurrentView = CollectesVM;
                     break;
             }
         }
+
     }
 }

@@ -19,12 +19,17 @@
         <DataTemplate DataType="{x:Type admin:UtilisateursViewModel}">
             <views:UtilisateursView />
         </DataTemplate>
+        
         <DataTemplate DataType="{x:Type admin:CollecteViewModel}">
             <views:CollectesView />
         </DataTemplate>
         <DataTemplate DataType="{x:Type admin:MagasinsViewModel}">
             <views:MagasinsView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type admin:MagasinsActifsViewModel}">
+            <views:MagasinsActifsView />
+        </DataTemplate>
+
         <!-- Ajoute ici les autres vues admin -->
     </Window.Resources>
 
@@ -50,6 +55,12 @@
             <TextBlock Text="Dashboard" FontWeight="Bold" Foreground="White" FontSize="18" Margin="20,30,0,30"/>
             <Button Content="Centres" Style="{StaticResource NavButtonStyle}" Command="{Binding NavigateCommand}"  CommandParameter="Centres"  Margin="10"/>
             <Button Content="Utilisateurs" Style="{StaticResource NavButtonStyle}" Command="{Binding NavigateCommand}" CommandParameter="Utilisateurs" Margin="10"/>
+            <Button Content="Magasins actifs"
+                        Style="{StaticResource NavButtonStyle}"
+                        Command="{Binding NavigateCommand}"
+                        CommandParameter="MagasinsActifs"
+                        Margin="10"/>
+
             <Button Content="Magasins" Style="{StaticResource NavButtonStyle}" Command="{Binding NavigateCommand}" CommandParameter="Magasins" Margin="10"/>
             <Button Content="Collectes" Style="{StaticResource NavButtonStyle}" Command="{Binding NavigateCommand}" CommandParameter="Collectes" Margin="10"/>
             <StackPanel VerticalAlignment="Bottom" Margin="10,0,10,10">

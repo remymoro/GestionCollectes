@@ -39,7 +39,6 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
         {
             WeakReferenceMessenger.Default.Register<CentresChangedMessage>(this, (r, m) =>
             {
-                System.Diagnostics.Debug.WriteLine("Message CentresChanged reçu !");
                 _ = LoadCentresAsync();
             });
 
