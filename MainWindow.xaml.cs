@@ -21,8 +21,6 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        // Accès direct via le membre static
-        var service = App.ServiceProvider.GetRequiredService<CollecteService>();
-        this.DataContext = new CollecteViewModel(service);
+
     }
 }

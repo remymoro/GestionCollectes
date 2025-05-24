@@ -3,14 +3,33 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Background="#F6F8FB"
              MinWidth="850" MinHeight="600">
-    <Border Padding="30" Background="White" CornerRadius="18" >
-        <StackPanel>
+    <Border Padding="30" Background="White" CornerRadius="18">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Titre -->
+                <RowDefinition Height="Auto"/>
+                <!-- Formulaire -->
+                <RowDefinition Height="Auto"/>
+                <!-- Boutons -->
+                <RowDefinition Height="Auto"/>
+                <!-- Séparateur -->
+                <RowDefinition Height="Auto"/>
+                <!-- Titre liste -->
+                <RowDefinition Height="*"/>
+                <!-- Liste qui grandit -->
+            </Grid.RowDefinitions>
+
+            <!-- Titre -->
             <TextBlock Text="Gestion des centres"
                        FontSize="26"
                        FontWeight="Bold"
                        Foreground="#223042"
-                       Margin="0 0 0 24"/>
-            <Grid Margin="0,0,0,18">
+                       Margin="0 0 0 24"
+                       Grid.Row="0"/>
+
+            <!-- Formulaire -->
+            <Grid Margin="0,0,0,18" Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -80,7 +99,7 @@
             </Grid>
 
             <!-- Boutons d'action -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,22">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,22" Grid.Row="2">
                 <Button Content="Ajouter"
                         Command="{Binding AddCentreCommand}"
                         Background="#23A094"
@@ -108,58 +127,53 @@
                         Padding="18,6"
                         BorderThickness="0"
                         Width="130"/>
-                
-                
             </StackPanel>
 
-            <Separator Margin="0,0,0,12"/>
+            <Separator Margin="0,0,0,12" Grid.Row="3"/>
+
+            <!-- Titre Liste -->
+            <TextBlock Text="Liste des centres" FontWeight="Bold" FontSize="16" Margin="0,0,0,7" Grid.Row="4"/>
 
             <!-- Liste des centres -->
-            <TextBlock Text="Liste des centres" FontWeight="Bold" FontSize="16" Margin="0,0,0,7"/>
-            <Border CornerRadius="8" BorderBrush="#D3D9E5" BorderThickness="1" Background="#F7F9FB">
-                <Border CornerRadius="8" BorderBrush="#D3D9E5" BorderThickness="1" Background="#F7F9FB">
-                    <ListBox ItemsSource="{Binding Centres}" 
-             SelectedItem="{Binding SelectedCentre, Mode=TwoWay}" 
-             MinHeight="120"
-             MaxHeight="300"
-             FontSize="16"
-             Background="Transparent"
-             BorderThickness="0"
-             Margin="0"
-             ScrollViewer.VerticalScrollBarVisibility="Auto">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Vertical" Margin="4">
-                                    <TextBlock Text="{Binding Nom}" FontWeight="Bold"/>
-                                    <TextBlock Text="{Binding Adresse}"/>
-                                    <TextBlock>
-                        <Run Text="Ville : "/>
-                        <Run Text="{Binding Ville}"/>
-                        <Run Text=" | Code postal : "/>
-                        <Run Text="{Binding CodePostal}"/>
-                                    </TextBlock>
-                                    <TextBlock>
-                        <Run Text="Responsable : "/>
-                        <Run Text="{Binding Responsable}"/>
-                        <Run Text=" | Téléphone : "/>
-                        <Run Text="{Binding Telephone}"/>
-                                    </TextBlock>
-                                    <Button Content="Supprimer"
-        Command="{Binding DataContext.DeleteCentreCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
-        CommandParameter="{Binding}"
-        Background="#F26363"
-        Foreground="White"
-        Padding="8,2"
-        Margin="0,5,0,0"
-        BorderThickness="0"
-        FontWeight="Bold"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Border>
-
+            <Border CornerRadius="8" BorderBrush="#D3D9E5" BorderThickness="1" Background="#F7F9FB" Grid.Row="5">
+                <ListBox ItemsSource="{Binding Centres}" 
+                         SelectedItem="{Binding SelectedCentre, Mode=TwoWay}" 
+                         FontSize="16"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         Margin="0"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Vertical" Margin="4">
+                                <TextBlock Text="{Binding Nom}" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding Adresse}"/>
+                                <TextBlock>
+                                    <Run Text="Ville : "/>
+                                    <Run Text="{Binding Ville}"/>
+                                    <Run Text=" | Code postal : "/>
+                                    <Run Text="{Binding CodePostal}"/>
+                                </TextBlock>
+                                <TextBlock>
+                                    <Run Text="Responsable : "/>
+                                    <Run Text="{Binding Responsable}"/>
+                                    <Run Text=" | Téléphone : "/>
+                                    <Run Text="{Binding Telephone}"/>
+                                </TextBlock>
+                                <Button Content="Supprimer"
+                                        Command="{Binding DataContext.DeleteCentreCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                        CommandParameter="{Binding}"
+                                        Background="#F26363"
+                                        Foreground="White"
+                                        Padding="8,2"
+                                        Margin="0,5,0,0"
+                                        BorderThickness="0"
+                                        FontWeight="Bold"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </Border>
-        </StackPanel>
+        </Grid>
     </Border>
 </UserControl>

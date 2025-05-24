@@ -12,30 +12,33 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
 
         public CollecteViewModel CollectesVM { get; }
         public CentresViewModel CentresVM { get; }
-
-
         public UtilisateursViewModel UtilisateursVM { get; }
-
-
+        public MagasinsViewModel MagasinsVM { get; }
 
         [ObservableProperty]
         private object currentView;
 
         public DashboardAdminViewModel()
         {
-            // Récupère les services via la DI
+            // Récupère une nouvelle instance à chaque fois pour éviter les partages de contexte
             var collecteService = App.ServiceProvider.GetRequiredService<CollecteService>();
-            var centreService = App.ServiceProvider.GetRequiredService<CentreService>();
             var utilisateurService = App.ServiceProvider.GetRequiredService<UtilisateurService>();
 
+            // Important : demande deux instances différentes !
+            var centreService1 = App.ServiceProvider.GetRequiredService<CentreService>();
+            var centreService2 = App.ServiceProvider.GetRequiredService<CentreService>();
+            var magasinService = App.ServiceProvider.GetRequiredService<MagasinService>();
+
             CollectesVM = new CollecteViewModel(collecteService);
-            CentresVM = new CentresViewModel(centreService);
+            CentresVM = new CentresViewModel(centreService1);
             UtilisateursVM = new UtilisateursViewModel(utilisateurService);
+            MagasinsVM = new MagasinsViewModel(magasinService, centreService2); // Utilise l'autre instance
 
             CurrentView = CollectesVM; // Par défaut
 
             NavigateCommand = new RelayCommand<string>(Navigate);
         }
+
 
         private void Navigate(string? page)
         {
@@ -50,12 +53,13 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
                 case "Utilisateurs":
                     CurrentView = UtilisateursVM;
                     break;
+                case "Magasins":
+                    CurrentView = MagasinsVM;
+                    break;
                 default:
                     CurrentView = CollectesVM;
                     break;
             }
         }
-
     }
-
 }

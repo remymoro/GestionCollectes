@@ -1,0 +1,23 @@
+﻿<Window x:Class="GestionCollectes.Presentation.Views.Utilisateurs.DashboardUtilisateurWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="clr-namespace:GestionCollectes.Presentation.Views.Utilisateurs"
+        xmlns:vm="clr-namespace:GestionCollectes.Presentation.ViewModels.Utilisateurs"
+        Title="Tableau de bord Utilisateur"
+        Height="700" Width="1100"
+        Background="#F6F8FB"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <!-- DataTemplate pour lier le VM CollecteUtilisateurViewModel à la vue CollecteUtilisateurView -->
+        <DataTemplate DataType="{x:Type vm:CollecteUtilisateurViewModel}">
+            <views:CollecteUtilisateurView />
+        </DataTemplate>
+        <!-- (Ajoute ici d’autres DataTemplate pour d’autres modules/vues au besoin) -->
+    </Window.Resources>
+
+    <Border Padding="30" Background="White" CornerRadius="18">
+        <!-- Affichage dynamique en fonction de la propriété VueCourante -->
+        <ContentControl Content="{Binding VueCourante}" />
+    </Border>
+</Window>

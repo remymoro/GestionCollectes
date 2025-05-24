@@ -34,7 +34,7 @@ namespace GestionCollectes.Presentation.Views
                     dashboard = new Centre.DashboardCentreWindow();
                     break;
                 default:
-                    dashboard = new Utilisateur.DashboardUtilisateurWindow();
+                    dashboard = new Utilisateurs.DashboardUtilisateurWindow();
                     break;
             }
             dashboard.Show();

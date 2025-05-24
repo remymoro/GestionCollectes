@@ -3,12 +3,12 @@ using System.Windows.Input;
 
 namespace GestionCollectes.Presentation.ViewModels
 {
-    public class RelayCommand : ICommand
+    public class OldRelayCommand : ICommand
     {
         private readonly Action<object?> _execute;
         private readonly Predicate<object?>? _canExecute;
 
-        public RelayCommand(Action<object?> execute, Predicate<object?>? canExecute = null)
+        public OldRelayCommand(Action<object?> execute, Predicate<object?>? canExecute = null)
         {
             _execute = execute;
             _canExecute = canExecute;

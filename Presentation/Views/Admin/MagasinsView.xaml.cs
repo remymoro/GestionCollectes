@@ -10,16 +10,17 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace GestionCollectes.Presentation.Views.Utilisateur
+namespace GestionCollectes.Presentation.Views.Admin
 {
     /// <summary>
-    /// Logique d'interaction pour DashboardUtilisateurWindow.xaml
+    /// Logique d'interaction pour MagasinsView.xaml
     /// </summary>
-    public partial class DashboardUtilisateurWindow : Window
+    public partial class MagasinsView : UserControl
     {
-        public DashboardUtilisateurWindow()
+        public MagasinsView()
         {
             InitializeComponent();
         }

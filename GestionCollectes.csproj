@@ -41,4 +41,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Include="Presentation\Resources\Images\Uploaded\default-store.png" />
+  </ItemGroup>
+
 </Project>

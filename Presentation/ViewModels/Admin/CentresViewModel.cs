@@ -1,9 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using GestionCollectes.ApplicationLayer.Services;
 using GestionCollectes.Domain.Entities;
+using GestionCollectes.Presentation.Messages;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 
 namespace GestionCollectes.Presentation.ViewModels.Admin
 {
@@ -20,6 +21,9 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
         [ObservableProperty] private string responsable = string.Empty;
         [ObservableProperty] private string telephone = string.Empty;
         [ObservableProperty] private Centre? selectedCentre;
+
+        public IRelayCommand ReinitialiserCommand { get; }
+
 
 
 
@@ -38,10 +42,10 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
         public CentresViewModel(CentreService service)
         {
             _service = service;
-
             AddCentreCommand = new AsyncRelayCommand(AddCentreAsync);
             DeleteCentreCommand = new AsyncRelayCommand<Centre>(DeleteCentreAsync);
             EditCentreCommand = new AsyncRelayCommand(EditCentreAsync);
+            ReinitialiserCommand = new RelayCommand(ReinitialiserFormulaire);
 
             Task.Run(LoadCentresAsync);
         }
@@ -84,6 +88,7 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
             await _service.AddAsync(centre);
             await LoadCentresAsync();
 
+            WeakReferenceMessenger.Default.Send(new CentresChangedMessage());
             // Reset des champs après ajout
             Nom = Adresse = Ville = CodePostal = Responsable = Telephone = string.Empty;
         }
@@ -102,6 +107,7 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
             if (result != System.Windows.MessageBoxResult.Yes) return;
 
             await _service.DeleteAsync(centre.Id);
+            WeakReferenceMessenger.Default.Send(new CentresChangedMessage());
             await LoadCentresAsync();
         }
 
@@ -141,5 +147,20 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
                 Nom = Adresse = Ville = CodePostal = Responsable = Telephone = string.Empty;
             }
         }
+
+
+
+        private void ReinitialiserFormulaire()
+        {
+            Nom = string.Empty;
+            Adresse = string.Empty;
+            Ville = string.Empty;
+            CodePostal = string.Empty;
+            Responsable = string.Empty;
+            Telephone = string.Empty;
+            SelectedCentre = null;
+        }
+
+
     }
 }

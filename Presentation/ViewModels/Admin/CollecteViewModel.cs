@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 
-namespace GestionCollectes.Presentation.ViewModels
+
+namespace GestionCollectes.Presentation.ViewModels.Admin
 {
 
     public partial class CollecteViewModel : ObservableObject

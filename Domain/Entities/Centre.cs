@@ -16,6 +16,8 @@ namespace GestionCollectes.Domain.Entities
         public string Responsable { get; set; } = string.Empty; // Nom du responsable du centre
         public string Telephone { get; set; } = string.Empty;   // Optionnel
 
-       
+        public ICollection<Magasin> Magasins { get; set; } = new List<Magasin>();
+
+
     }
 }

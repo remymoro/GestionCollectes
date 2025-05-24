@@ -41,7 +41,7 @@ namespace GestionCollectes.Presentation.ViewModels
         public LoginViewModel(UtilisateurService utilisateurService)
         {
             _utilisateurService = utilisateurService;
-            ConnexionCommand = new RelayCommand(async _ => await ConnexionAsync());
+            ConnexionCommand = new OldRelayCommand(async _ => await ConnexionAsync());
         }
 
         private async Task ConnexionAsync()

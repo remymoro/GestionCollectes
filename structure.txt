@@ -2,11 +2,13 @@
    |-- Services
       |-- CentreService.cs
       |-- CollecteService.cs
+      |-- MagasinService.cs
       |-- UtilisateurService.cs
 |-- Domain
    |-- Entities
       |-- Centre.cs
       |-- Collecte.cs
+      |-- Magasin.cs
       |-- Utilisateur.cs
    |-- Enums
       |-- RoleUtilisateur.cs
@@ -20,20 +22,32 @@
    |-- Repositories
       |-- CentreRepository.cs
       |-- CollecteRepository.cs
+      |-- MagasinRepository.cs
       |-- UtilisateurRepository.cs
 |-- Presentation
    |-- Converters
+      |-- BoolToOpacityConverter.cs
+      |-- ImagePathToBitmapConverter.cs
       |-- NullToBoolConverter.cs
+      |-- PathToImageSourceConverter.cs
+      |-- StringNullOrEmptyToVisibilityConverter.cs
    |-- Resources
+      |-- Images
+         |-- Uploaded
+            |-- defaut-store.png
       |-- Styles.xaml
    |-- ViewModels
       |-- Admin
          |-- CentresViewModel.cs
+         |-- CollecteViewModel.cs
          |-- DashboardAdminViewModel.cs
+         |-- MagasinsViewModel.cs
          |-- UtilisateursViewModel.cs
-      |-- CollecteViewModel.cs
+      |-- Utilisateurs
+         |-- CollecteUtilisateurViewModel.cs
+         |-- DashboardUtilisateurViewModel.cs
       |-- LoginViewModel.cs
-      |-- RelayCommand.cs
+      |-- OldRelayCommand.cs
    |-- Views
       |-- Admin
          |-- CentresView.xaml
@@ -42,12 +56,16 @@
          |-- CollectesView.xaml.cs
          |-- DashboardAdminWindow.xaml
          |-- DashboardAdminWindow.xaml.cs
+         |-- MagasinsView.xaml
+         |-- MagasinsView.xaml.cs
          |-- UtilisateursView.xaml
          |-- UtilisateursView.xaml.cs
       |-- Centre
          |-- DashboardCentreWindow.xaml
          |-- DashboardCentreWindow.xaml.cs
-      |-- Utilisateur
+      |-- Utilisateurs
+         |-- CollecteUtilisateurView.xaml
+         |-- CollecteUtilisateurView.xaml.cs
          |-- DashboardUtilisateurWindow.xaml
          |-- DashboardUtilisateurWindow.xaml.cs
       |-- LoginWindow.xaml
@@ -62,6 +80,7 @@
 |-- App.xaml
 |-- App.xaml.cs
 |-- AssemblyInfo.cs
+|-- docker-compose.yml
 |-- GestionCollectes.csproj
 |-- GestionCollectes.csproj.user
 |-- GestionCollectes.sln

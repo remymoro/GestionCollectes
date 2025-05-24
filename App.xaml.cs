@@ -23,18 +23,26 @@ namespace GestionCollectes
 
             var connectionString = "server=localhost;port=3306;database=projet_restos_coeur;user=restos;password=restos123;SslMode=none;";
             services.AddDbContext<AppDbContext>(options =>
-                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)),
+                ServiceLifetime.Transient // Important !
+            );
 
             // Ajoute ici tous tes services avant BuildServiceProvider
-            services.AddScoped<IRepository<Collecte>, CollecteRepository>();
-            services.AddScoped<CollecteService>(); // <-- AJOUTE CETTE LIGNE !
-            services.AddScoped<IRepository<Utilisateur>, UtilisateurRepository>();
-            services.AddScoped<UtilisateurService>();
+            // Enregistre tout en Transient
+            services.AddTransient<IRepository<Collecte>, CollecteRepository>();
+            services.AddTransient<CollecteService>();
+            services.AddTransient<IRepository<Utilisateur>, UtilisateurRepository>();
+            services.AddTransient<UtilisateurService>();
+            services.AddTransient<IRepository<Magasin>, MagasinRepository>();
+            services.AddTransient<MagasinService>();
+            services.AddTransient<IRepository<Centre>, CentreRepository>();
+            services.AddTransient<CentreService>();
 
+            // ViewModels utilisateur
+            services.AddTransient<GestionCollectes.Presentation.ViewModels.Utilisateurs.DashboardUtilisateurViewModel>();
+            services.AddTransient<GestionCollectes.Presentation.ViewModels.Utilisateurs.CollecteUtilisateurViewModel>();
 
-
-            services.AddScoped<IRepository<Centre>, CentreRepository>();
-            services.AddScoped<CentreService>();
+            ServiceProvider = services.BuildServiceProvider();
 
             // Ici tu construis le conteneur DI
             ServiceProvider = services.BuildServiceProvider();

@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="GestionCollectes.Presentation.Views.Utilisateurs.CollecteUtilisateurView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="Transparent">
+    <StackPanel>
+        <!-- Titre et bouton d'aide -->
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0 0 0 12">
+            <TextBlock Text="Mes collectes" FontSize="26" FontWeight="Bold" Foreground="#223042"/>
+            <Button Content="?" ToolTip="Afficher le guide utilisateur"
+                    Width="36" Height="36" Margin="14,0,0,0"
+                    FontSize="18" FontWeight="Bold"
+                    Background="#EAF6FB" Foreground="#23658B" BorderBrush="#B4D6ED"
+                    Click="GuideButton_Click"/>
+        </StackPanel>
+
+        <!-- Bloc d'aide visible dès l'ouverture -->
+        <Border Background="#EAF6FB" CornerRadius="10" Padding="14" Margin="0 0 0 18" BorderBrush="#B4D6ED" BorderThickness="1">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="ℹ️" FontSize="22" Margin="0 0 12 0"/>
+                <TextBlock FontSize="16" Foreground="#23658B" TextWrapping="Wrap">
+                    <Run Text="Bienvenue ! Ce tableau de bord vous permet de saisir ou consulter les collectes en cours. "/>
+                    <LineBreak/>
+                    <Run Text="1. Choisissez la collecte dans la liste ci-dessous."/>
+                    <LineBreak/>
+                    <Run Text="2. Cliquez sur « Accéder » pour commencer."/>
+                    <LineBreak/>
+                    <Run Text="3. Si le bouton est gris, la collecte n’est pas encore disponible."/>
+                    <LineBreak/>
+                    <Run Text="4. En cas de besoin, cliquez sur le bouton « ? » pour retrouver ces instructions."/>
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <!-- Liste des collectes -->
+        <ItemsControl ItemsSource="{Binding Collectes}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Background="#F3F4F8" CornerRadius="12" Padding="18" Margin="0 0 0 18">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <StackPanel Width="300">
+                                <TextBlock Text="{Binding Nom}" FontWeight="Bold" FontSize="18"/>
+                                <TextBlock>
+                                    <Run Text="Du "/>
+                                    <Run Text="{Binding DateDebut, StringFormat='{}{0:dd/MM/yyyy}'}"/>
+                                    <Run Text=" au "/>
+                                    <Run Text="{Binding DateFin, StringFormat='{}{0:dd/MM/yyyy}'}"/>
+                                </TextBlock>
+                                <TextBlock Text="{Binding Statut}" FontStyle="Italic" Foreground="#888" FontSize="14"/>
+                            </StackPanel>
+                            <Button Content="Accéder"
+                                    Command="{Binding DataContext.AccederCollecteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}"
+                                    Margin="30 0 0 0"
+                                    Width="120"
+                                    Height="40"
+                                    IsEnabled="{Binding EstAccessible}" />
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- Texte d'aide en bas de page -->
+        <TextBlock FontSize="14" Foreground="#888" Margin="0,20,0,0" TextAlignment="Center">
+            Besoin d'aide ? Cliquez sur « ? » en haut à droite ou demandez à votre responsable.
+        </TextBlock>
+    </StackPanel>
+</UserControl>
