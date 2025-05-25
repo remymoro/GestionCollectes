@@ -18,11 +18,14 @@ namespace GestionCollectes.Domain.Entities
             public DateTime DateFin { get; set; }
             public StatutCollecte Statut { get; set; }
 
+        // 🟢 AJOUTER ICI :
+            
 
 
-
-        // Liens futurs (ex: Produits, Magasin, etc.)
-        // public List<ProduitCollecte> Produits { get; set; }
+        public ICollection<CollecteCentre> CollecteCentres { get; set; } = new List<CollecteCentre>();
     }
+
+    // Liens futurs (ex: Produits, Magasin, etc.)
+    // public List<ProduitCollecte> Produits { get; set; }
 }
 

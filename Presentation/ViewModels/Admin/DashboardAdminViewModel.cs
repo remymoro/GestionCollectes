@@ -1,73 +1,58 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using GestionCollectes.ApplicationLayer.Services;
-using Microsoft.Extensions.DependencyInjection;
+using GestionCollectes.Presentation.Navigations;
 using System.Windows.Input;
 
 namespace GestionCollectes.Presentation.ViewModels.Admin
 {
     public partial class DashboardAdminViewModel : ObservableObject
     {
-        public ICommand NavigateCommand { get; }
+        private readonly INavigationService _navigationService;
 
-        public CollecteViewModel CollectesVM { get; }
-        public CentresViewModel CentresVM { get; }
-        public UtilisateursViewModel UtilisateursVM { get; }
+        public DashboardAdminViewModel(INavigationService navigationService)
+        {
+            _navigationService = navigationService;
+            NavigateCommand = new RelayCommand<string>(Navigate);
 
-        public MagasinsActifsViewModel MagasinsActifsVM { get; }
+            // Initialiser CurrentView avec la vue par défaut du service
+            CurrentView = _navigationService.CurrentView;
 
-        public MagasinsViewModel MagasinsVM { get; }
+            // Écouter le changement de vue dans le service de navigation
+            _navigationService.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(INavigationService.CurrentView))
+                    CurrentView = _navigationService.CurrentView;
+            };
+        }
 
         [ObservableProperty]
         private object currentView;
 
-        public DashboardAdminViewModel()
-        {
-            // Récupère une nouvelle instance à chaque fois pour éviter les partages de contexte
-            var collecteService = App.ServiceProvider.GetRequiredService<CollecteService>();
-            var utilisateurService = App.ServiceProvider.GetRequiredService<UtilisateurService>();
-
-            // Important : demande deux instances différentes !
-            var centreService1 = App.ServiceProvider.GetRequiredService<CentreService>();
-            var centreService2 = App.ServiceProvider.GetRequiredService<CentreService>();
-            var magasinService = App.ServiceProvider.GetRequiredService<MagasinService>();
-            MagasinsActifsVM = new MagasinsActifsViewModel(magasinService, centreService2);
-
-            CollectesVM = new CollecteViewModel(collecteService);
-            CentresVM = new CentresViewModel(centreService1);
-            UtilisateursVM = new UtilisateursViewModel(utilisateurService);
-            MagasinsVM = new MagasinsViewModel(magasinService, centreService2); // Utilise l'autre instance
-
-            CurrentView = CollectesVM; // Par défaut
-
-            NavigateCommand = new RelayCommand<string>(Navigate);
-        }
-
+        public ICommand NavigateCommand { get; }
 
         private void Navigate(string? page)
         {
             switch (page)
             {
                 case "Collectes":
-                    CurrentView = CollectesVM;
+                    _navigationService.NavigateToCollectes();
                     break;
                 case "Centres":
-                    CurrentView = CentresVM;
+                    _navigationService.NavigateToCentres();
                     break;
                 case "Utilisateurs":
-                    CurrentView = UtilisateursVM;
+                    _navigationService.NavigateToUtilisateurs();
                     break;
                 case "Magasins":
-                    CurrentView = MagasinsVM;
+                    _navigationService.NavigateToMagasins();
                     break;
-                case "MagasinsActifs": // Ajout du bouton magasins actifs
-                    CurrentView = MagasinsActifsVM;
+                case "MagasinsActivation":
+                    _navigationService.NavigateToMagasinsActivation();
                     break;
                 default:
-                    CurrentView = CollectesVM;
+                    _navigationService.NavigateToCollectes();
                     break;
             }
         }
-
     }
 }

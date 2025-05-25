@@ -18,6 +18,8 @@ namespace GestionCollectes.Domain.Entities
 
         public ICollection<Magasin> Magasins { get; set; } = new List<Magasin>();
 
+        public ICollection<CollecteCentre> CollecteCentres { get; set; } = new List<CollecteCentre>();
+
 
     }
 }

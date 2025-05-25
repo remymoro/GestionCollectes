@@ -25,15 +25,9 @@ namespace GestionCollectes.Presentation.Views.Admin
         public CentresView()
         {
             InitializeComponent();
-            this.Loaded += CentresView_Loaded; // On abonne à l’événement Loaded
         }
 
-        private async void CentresView_Loaded(object sender, RoutedEventArgs e)
-        {
-            // On récupère le ViewModel du DataContext
-            if (DataContext is CentresViewModel vm)
-                await vm.LoadCentresAsync();
-        }
+      
 
 
     }

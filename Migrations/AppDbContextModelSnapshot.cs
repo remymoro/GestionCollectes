@@ -85,6 +85,21 @@ namespace GestionCollectes.Migrations
                     b.ToTable("Collectes");
                 });
 
+            modelBuilder.Entity("GestionCollectes.Domain.Entities.CollecteCentre", b =>
+                {
+                    b.Property<int>("CollecteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CentreId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CollecteId", "CentreId");
+
+                    b.HasIndex("CentreId");
+
+                    b.ToTable("CollecteCentres");
+                });
+
             modelBuilder.Entity("GestionCollectes.Domain.Entities.Magasin", b =>
                 {
                     b.Property<int>("Id")
@@ -142,7 +157,28 @@ namespace GestionCollectes.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CentreId");
+
                     b.ToTable("Utilisateurs");
+                });
+
+            modelBuilder.Entity("GestionCollectes.Domain.Entities.CollecteCentre", b =>
+                {
+                    b.HasOne("GestionCollectes.Domain.Entities.Centre", "Centre")
+                        .WithMany("CollecteCentres")
+                        .HasForeignKey("CentreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GestionCollectes.Domain.Entities.Collecte", "Collecte")
+                        .WithMany("CollecteCentres")
+                        .HasForeignKey("CollecteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Centre");
+
+                    b.Navigation("Collecte");
                 });
 
             modelBuilder.Entity("GestionCollectes.Domain.Entities.Magasin", b =>
@@ -156,9 +192,25 @@ namespace GestionCollectes.Migrations
                     b.Navigation("Centre");
                 });
 
+            modelBuilder.Entity("GestionCollectes.Domain.Entities.Utilisateur", b =>
+                {
+                    b.HasOne("GestionCollectes.Domain.Entities.Centre", "Centre")
+                        .WithMany()
+                        .HasForeignKey("CentreId");
+
+                    b.Navigation("Centre");
+                });
+
             modelBuilder.Entity("GestionCollectes.Domain.Entities.Centre", b =>
                 {
+                    b.Navigation("CollecteCentres");
+
                     b.Navigation("Magasins");
+                });
+
+            modelBuilder.Entity("GestionCollectes.Domain.Entities.Collecte", b =>
+                {
+                    b.Navigation("CollecteCentres");
                 });
 #pragma warning restore 612, 618
         }

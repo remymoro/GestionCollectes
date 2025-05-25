@@ -15,14 +15,30 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
+                <!-- Nom -->
                 <TextBlock Grid.Column="0" Grid.Row="0" Text="Nom :" VerticalAlignment="Center" Margin="0,0,6,0"/>
                 <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Nom, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,12,0" />
 
-                <TextBlock Grid.Column="2" Grid.Row="0" Text="Lieu :" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                <TextBox Grid.Column="3" Grid.Row="0" Text="{Binding Lieu, UpdateSourceTrigger=PropertyChanged}" />
+                <!-- Centres à cocher -->
+                <TextBlock Grid.Column="2" Grid.Row="0" Text="Centres :" VerticalAlignment="Top" Margin="0,0,6,0"/>
+                <StackPanel Grid.Column="3" Grid.Row="0" Orientation="Vertical">
+                    <CheckBox Content="Tout sélectionner"
+                              IsChecked="{Binding ToutCocher, Mode=TwoWay}"
+                              Margin="0,0,0,4"/>
+                    <ItemsControl ItemsSource="{Binding Centres}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Content="{Binding Nom}" 
+                                          IsChecked="{Binding IsChecked, Mode=TwoWay}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
 
+                <!-- Dates -->
                 <TextBlock Grid.Column="0" Grid.Row="1" Text="Début :" VerticalAlignment="Center" Margin="0,8,6,0"/>
                 <DatePicker Grid.Column="1" Grid.Row="1" SelectedDate="{Binding DateDebut}" Margin="0,8,12,0"/>
 
@@ -30,7 +46,10 @@
                 <DatePicker Grid.Column="3" Grid.Row="1" SelectedDate="{Binding DateFin}" Margin="0,8,0,0"/>
             </Grid>
 
-            <Button Content="Ajouter la collecte" Command="{Binding AddCollecteCommand}" Width="180" Height="36" HorizontalAlignment="Right" Margin="0,0,0,16" Background="#3B82F6" Foreground="White" FontWeight="SemiBold"/>
+            <Button Content="Ajouter la collecte"
+                    Command="{Binding AddCollecteCommand}"
+                    Width="180" Height="36" HorizontalAlignment="Right" Margin="0,0,0,16"
+                    Background="#3B82F6" Foreground="White" FontWeight="SemiBold"/>
 
             <Separator Margin="0,10,0,18"/>
 
@@ -41,7 +60,8 @@
                         <Border Margin="4" Padding="10" Background="White" CornerRadius="6" BorderBrush="#CBD5E1" BorderThickness="1">
                             <StackPanel>
                                 <TextBlock Text="{Binding Nom}" FontWeight="SemiBold" FontSize="14"/>
-                                <TextBlock Text="{Binding Lieu}" FontSize="12" Foreground="#6B7280"/>
+                                <!-- Ici tu peux afficher les centres liés, exemple si tu ajoutes une propriété CentresAsString -->
+                                <!--<TextBlock Text="{Binding CentresAsString}" FontSize="12" Foreground="#6B7280"/>-->
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Début : " FontWeight="Bold" FontSize="12"/>
                                     <TextBlock Text="{Binding DateDebut, StringFormat='{}{0:dd/MM/yyyy}'}" FontSize="12"/>
@@ -55,5 +75,4 @@
             </ListBox>
         </StackPanel>
     </Border>
-
 </UserControl>

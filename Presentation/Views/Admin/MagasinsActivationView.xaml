@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="GestionCollectes.Presentation.Views.Admin.MagasinsActivationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <StackPanel Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left" Width="Auto">
+        <!-- Sélection du centre -->
+        <ComboBox ItemsSource="{Binding Centres}"
+                  SelectedItem="{Binding CentreSelectionne, Mode=TwoWay}"
+                  DisplayMemberPath="Nom"
+                  Width="250"
+                  Margin="0,0,0,10"/>
+
+        <!-- Liste des magasins -->
+        <DataGrid ItemsSource="{Binding Magasins}" AutoGenerateColumns="False" CanUserAddRows="False" Height="300">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" IsReadOnly="True" Width="2*"/>
+                <DataGridTextColumn Header="Adresse" Binding="{Binding Adresse}" IsReadOnly="True" Width="2*"/>
+                <DataGridCheckBoxColumn Header="Actif" Binding="{Binding Actif, Mode=TwoWay}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Enregistrement -->
+        <Button Content="Enregistrer" Command="{Binding EnregistrerCommand}" Width="120" Margin="0,10,0,0"/>
+    </StackPanel>
+</UserControl>

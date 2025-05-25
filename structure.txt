@@ -31,16 +31,21 @@
       |-- NullToBoolConverter.cs
       |-- PathToImageSourceConverter.cs
       |-- StringNullOrEmptyToVisibilityConverter.cs
+   |-- Messages
+      |-- CentresChangedMessage.cs
    |-- Resources
       |-- Images
          |-- Uploaded
-            |-- defaut-store.png
+            |-- default-store.png
       |-- Styles.xaml
+   |-- Stores
+      |-- CentreStore.cs
    |-- ViewModels
       |-- Admin
          |-- CentresViewModel.cs
          |-- CollecteViewModel.cs
          |-- DashboardAdminViewModel.cs
+         |-- MagasinsActifsViewModel.cs
          |-- MagasinsViewModel.cs
          |-- UtilisateursViewModel.cs
       |-- Utilisateurs
@@ -56,6 +61,8 @@
          |-- CollectesView.xaml.cs
          |-- DashboardAdminWindow.xaml
          |-- DashboardAdminWindow.xaml.cs
+         |-- MagasinsActifsView.xaml
+         |-- MagasinsActifsView.xaml.cs
          |-- MagasinsView.xaml
          |-- MagasinsView.xaml.cs
          |-- UtilisateursView.xaml

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using GestionCollectes.Presentation.ViewModels.Admin;
+using Microsoft.Extensions.DependencyInjection;
 
 
 
@@ -25,7 +26,7 @@ namespace GestionCollectes.Presentation.Views.Admin
         public DashboardAdminWindow()
         {
             InitializeComponent();
-            DataContext = new DashboardAdminViewModel();
+            DataContext = App.ServiceProvider.GetRequiredService<DashboardAdminViewModel>();
         }
     }
 }

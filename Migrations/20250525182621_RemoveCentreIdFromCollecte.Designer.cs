@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionCollectes.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250520200107_AjoutTableCentreEtLienCollecte")]
-    partial class AjoutTableCentreEtLienCollecte
+    [Migration("20250525182621_RemoveCentreIdFromCollecte")]
+    partial class RemoveCentreIdFromCollecte
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,18 +70,11 @@ namespace GestionCollectes.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CentreId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("DateDebut")
                         .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("DateFin")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Lieu")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.Property<string>("Nom")
                         .IsRequired()
@@ -92,9 +85,55 @@ namespace GestionCollectes.Migrations
 
                     b.HasKey("Id");
 
+                    b.ToTable("Collectes");
+                });
+
+            modelBuilder.Entity("GestionCollectes.Domain.Entities.CollecteCentre", b =>
+                {
+                    b.Property<int>("CollecteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CentreId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CollecteId", "CentreId");
+
                     b.HasIndex("CentreId");
 
-                    b.ToTable("Collectes");
+                    b.ToTable("CollecteCentres");
+                });
+
+            modelBuilder.Entity("GestionCollectes.Domain.Entities.Magasin", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Actif")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Adresse")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("CentreId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImagePath")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Nom")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CentreId", "Adresse")
+                        .IsUnique();
+
+                    b.ToTable("Magasins");
                 });
 
             modelBuilder.Entity("GestionCollectes.Domain.Entities.Utilisateur", b =>
@@ -121,13 +160,34 @@ namespace GestionCollectes.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CentreId");
+
                     b.ToTable("Utilisateurs");
                 });
 
-            modelBuilder.Entity("GestionCollectes.Domain.Entities.Collecte", b =>
+            modelBuilder.Entity("GestionCollectes.Domain.Entities.CollecteCentre", b =>
                 {
                     b.HasOne("GestionCollectes.Domain.Entities.Centre", "Centre")
-                        .WithMany("Collectes")
+                        .WithMany("CollecteCentres")
+                        .HasForeignKey("CentreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GestionCollectes.Domain.Entities.Collecte", "Collecte")
+                        .WithMany("CollecteCentres")
+                        .HasForeignKey("CollecteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Centre");
+
+                    b.Navigation("Collecte");
+                });
+
+            modelBuilder.Entity("GestionCollectes.Domain.Entities.Magasin", b =>
+                {
+                    b.HasOne("GestionCollectes.Domain.Entities.Centre", "Centre")
+                        .WithMany("Magasins")
                         .HasForeignKey("CentreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -135,9 +195,25 @@ namespace GestionCollectes.Migrations
                     b.Navigation("Centre");
                 });
 
+            modelBuilder.Entity("GestionCollectes.Domain.Entities.Utilisateur", b =>
+                {
+                    b.HasOne("GestionCollectes.Domain.Entities.Centre", "Centre")
+                        .WithMany()
+                        .HasForeignKey("CentreId");
+
+                    b.Navigation("Centre");
+                });
+
             modelBuilder.Entity("GestionCollectes.Domain.Entities.Centre", b =>
                 {
-                    b.Navigation("Collectes");
+                    b.Navigation("CollecteCentres");
+
+                    b.Navigation("Magasins");
+                });
+
+            modelBuilder.Entity("GestionCollectes.Domain.Entities.Collecte", b =>
+                {
+                    b.Navigation("CollecteCentres");
                 });
 #pragma warning restore 612, 618
         }

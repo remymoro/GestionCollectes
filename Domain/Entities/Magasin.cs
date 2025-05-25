@@ -21,5 +21,8 @@ namespace GestionCollectes.Domain.Entities
 
         public int CentreId { get; set; }
         public Centre? Centre { get; set; }
+
+
+
     }
 }

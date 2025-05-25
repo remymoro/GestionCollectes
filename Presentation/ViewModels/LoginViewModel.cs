@@ -5,15 +5,16 @@ using System.Windows.Input;
 using GestionCollectes.ApplicationLayer.Services;
 using GestionCollectes.Domain.Entities;
 using GestionCollectes.Domain.Enums;
+using GestionCollectes.Presentation.Navigation;
 
 namespace GestionCollectes.Presentation.ViewModels
 {
     public class LoginViewModel : INotifyPropertyChanged
     {
         private readonly UtilisateurService _utilisateurService;
+        private readonly IWindowNavigationService _windowNavigationService;
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        public event Action<Utilisateur>? ConnexionRéussie;
 
         private string _nom = "";
         public string Nom
@@ -38,9 +39,10 @@ namespace GestionCollectes.Presentation.ViewModels
 
         public ICommand ConnexionCommand { get; }
 
-        public LoginViewModel(UtilisateurService utilisateurService)
+        public LoginViewModel(UtilisateurService utilisateurService, IWindowNavigationService windowNavigationService)
         {
             _utilisateurService = utilisateurService;
+            _windowNavigationService = windowNavigationService;
             ConnexionCommand = new OldRelayCommand(async _ => await ConnexionAsync());
         }
 
@@ -54,7 +56,8 @@ namespace GestionCollectes.Presentation.ViewModels
             else
             {
                 Erreur = null;
-                ConnexionRéussie?.Invoke(user);
+                App.UtilisateurCourant = user;
+                _windowNavigationService.ShowDashboardForRole(user.Role);
             }
         }
 

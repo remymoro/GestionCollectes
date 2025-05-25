@@ -13,6 +13,7 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
     public partial class UtilisateursViewModel : ObservableObject
     {
         private readonly UtilisateurService _utilisateurService;
+        private readonly CentreService _centreService;
 
         [ObservableProperty]
         private ObservableCollection<Utilisateur> utilisateurs = new();
@@ -24,7 +25,15 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
         private Utilisateur editUtilisateur = new Utilisateur();
 
         [ObservableProperty]
-        private string motDePasse = string.Empty; // pour la saisie/édition
+        private string motDePasse = string.Empty;
+
+        public ObservableCollection<Centre> Centres { get; } = new();
+
+        [ObservableProperty]
+        private Centre? centreSelectionne;
+
+        [ObservableProperty]
+        private bool afficherChampCentre;
 
         public IEnumerable<RoleUtilisateur> RolesDisponibles => Enum.GetValues(typeof(RoleUtilisateur)).Cast<RoleUtilisateur>();
 
@@ -33,17 +42,26 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
         public IAsyncRelayCommand DeleteUtilisateurCommand { get; }
         public IAsyncRelayCommand UpdateUtilisateurCommand { get; }
 
-        public UtilisateursViewModel(UtilisateurService utilisateurService)
+        // Rôles qui nécessitent un centre
+        private static readonly RoleUtilisateur[] RolesAyantCentre = new[]
+        {
+            RoleUtilisateur.Centre,
+            RoleUtilisateur.Utilisateur
+        };
+
+        public UtilisateursViewModel(UtilisateurService utilisateurService, CentreService centreService)
         {
             _utilisateurService = utilisateurService;
+            _centreService = centreService;
 
             LoadUtilisateursCommand = new AsyncRelayCommand(LoadUtilisateursAsync);
             AddUtilisateurCommand = new AsyncRelayCommand(AddUtilisateurAsync, CanAdd);
             DeleteUtilisateurCommand = new AsyncRelayCommand(DeleteUtilisateurAsync, CanDeleteOrEdit);
             UpdateUtilisateurCommand = new AsyncRelayCommand(UpdateUtilisateurAsync, CanDeleteOrEdit);
 
-            // Surveille les changements de saisie dans le formulaire d'ajout/modif
-            EditUtilisateur.PropertyChanged += (s, e) => AddUtilisateurCommand.NotifyCanExecuteChanged();
+            // Abonne-toi à PropertyChanged sur EditUtilisateur
+            AttachEditUtilisateurPropertyChanged(EditUtilisateur);
+
             PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(MotDePasse))
@@ -56,41 +74,66 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
                 }
             };
 
-            // Charge la liste au lancement
+            // Charge les listes au lancement
             LoadUtilisateursCommand.Execute(null);
+            _ = ChargerCentresAsync();
         }
 
-        // Utilitaire : reset le formulaire d’édition/après ajout
+        // Abonnement dynamique à PropertyChanged sur EditUtilisateur
+        private void AttachEditUtilisateurPropertyChanged(Utilisateur utilisateur)
+        {
+            utilisateur.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(utilisateur.Role))
+                {
+                    AfficherChampCentre = RolesAyantCentre.Contains(utilisateur.Role);
+                    if (!AfficherChampCentre) CentreSelectionne = null;
+                }
+                AddUtilisateurCommand.NotifyCanExecuteChanged();
+            };
+        }
+
+        private async Task ChargerCentresAsync()
+        {
+            Centres.Clear();
+            var centres = await _centreService.GetAllAsync();
+            foreach (var centre in centres)
+                Centres.Add(centre);
+        }
+
         private void ResetEdit()
         {
             EditUtilisateur = new Utilisateur();
             MotDePasse = string.Empty;
-            EditUtilisateur.PropertyChanged += (s, e) => AddUtilisateurCommand.NotifyCanExecuteChanged();
+            CentreSelectionne = null;
+            AttachEditUtilisateurPropertyChanged(EditUtilisateur);
         }
 
-        // Quand tu sélectionnes un utilisateur dans la liste
         partial void OnSelectedUtilisateurChanged(Utilisateur? oldValue, Utilisateur? newValue)
         {
             if (newValue != null)
             {
-                // Clone pour édition (sinon tu modifies direct la liste)
                 EditUtilisateur = new Utilisateur
                 {
                     Id = newValue.Id,
                     Nom = newValue.Nom,
                     MotDePasseHash = newValue.MotDePasseHash,
-                    Role = newValue.Role
+                    Role = newValue.Role,
+                    CentreId = newValue.CentreId
                 };
                 MotDePasse = newValue.MotDePasseHash;
+                CentreSelectionne = Centres.FirstOrDefault(c => c.Id == newValue.CentreId);
+                AfficherChampCentre = RolesAyantCentre.Contains(newValue.Role);
+                AttachEditUtilisateurPropertyChanged(EditUtilisateur);
             }
             else
             {
                 ResetEdit();
+                AfficherChampCentre = false;
             }
             UpdateUtilisateurCommand.NotifyCanExecuteChanged();
         }
 
-        // CHARGEMENT
         private async Task LoadUtilisateursAsync()
         {
             var list = await _utilisateurService.GetAllAsync();
@@ -102,16 +145,17 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
             ResetEdit();
         }
 
-        // AJOUT
         private async Task AddUtilisateurAsync()
         {
             if (!CanAdd()) return;
             EditUtilisateur.MotDePasseHash = MotDePasse;
+            EditUtilisateur.CentreId = AfficherChampCentre && CentreSelectionne != null
+                ? CentreSelectionne.Id
+                : null;
             await _utilisateurService.AddAsync(EditUtilisateur);
             await LoadUtilisateursAsync();
         }
 
-        // SUPPRESSION
         private async Task DeleteUtilisateurAsync()
         {
             if (SelectedUtilisateur == null) return;
@@ -119,24 +163,25 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
             await LoadUtilisateursAsync();
         }
 
-        // MODIFICATION
         private async Task UpdateUtilisateurAsync()
         {
             if (SelectedUtilisateur == null) return;
 
-            // Recopie les valeurs éditées dans l'objet sélectionné avant update
             SelectedUtilisateur.Nom = EditUtilisateur.Nom;
             SelectedUtilisateur.Role = EditUtilisateur.Role;
             SelectedUtilisateur.MotDePasseHash = MotDePasse;
+            SelectedUtilisateur.CentreId = AfficherChampCentre && CentreSelectionne != null
+                ? CentreSelectionne.Id
+                : null;
 
             await _utilisateurService.UpdateAsync(SelectedUtilisateur);
             await LoadUtilisateursAsync();
         }
 
-        // CONDITIONS POUR COMMANDES
         private bool CanAdd()
             => !string.IsNullOrWhiteSpace(EditUtilisateur?.Nom)
-            && !string.IsNullOrWhiteSpace(MotDePasse);
+            && !string.IsNullOrWhiteSpace(MotDePasse)
+            && (!AfficherChampCentre || (CentreSelectionne != null));
 
         private bool CanDeleteOrEdit()
             => SelectedUtilisateur != null;

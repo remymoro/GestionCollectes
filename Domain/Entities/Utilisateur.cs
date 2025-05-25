@@ -20,5 +20,7 @@ namespace GestionCollectes.Domain.Entities
 
         [ObservableProperty]
         private int? centreId;
+
+        public Centre? Centre { get; set; } // (optionnelle, mais très utile avec EF)
     }
 }

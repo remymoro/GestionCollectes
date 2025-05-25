@@ -1,55 +1,25 @@
-﻿using GestionCollectes.Presentation.ViewModels;
-using GestionCollectes.ApplicationLayer.Services;
+﻿using System.Windows;
+using GestionCollectes.Presentation.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
-using System.Windows;
-using System.Windows.Controls;
 
 namespace GestionCollectes.Presentation.Views
 {
     public partial class LoginWindow : Window
     {
-        private readonly LoginViewModel _vm;
-
         public LoginWindow()
         {
             InitializeComponent();
-            var utilisateurService = App.ServiceProvider.GetRequiredService<UtilisateurService>();
-            _vm = new LoginViewModel(utilisateurService);
-            _vm.ConnexionRéussie += OnConnexionRéussie;
-            DataContext = _vm;
+            // Injection du ViewModel via le container DI
+            DataContext = App.ServiceProvider.GetRequiredService<LoginViewModel>();
         }
 
-        private void OnConnexionRéussie(GestionCollectes.Domain.Entities.Utilisateur utilisateur)
-        {
-
-            App.UtilisateurCourant = utilisateur;
-            // Redirection Dashboard selon le rôle
-            Window dashboard;
-            switch (utilisateur.Role)
-            {
-                case Domain.Enums.RoleUtilisateur.SiegeAdmin:
-                    dashboard = new Admin.DashboardAdminWindow();
-                    break;
-                case Domain.Enums.RoleUtilisateur.Centre:
-                    dashboard = new Centre.DashboardCentreWindow();
-                    break;
-                default:
-                    dashboard = new Utilisateurs.DashboardUtilisateurWindow();
-                    break;
-            }
-            dashboard.Show();
-            this.Close();
-        }
-
-
-
+        // Gestion du PasswordBox (WPF ne supporte pas le binding direct du Password)
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            if (DataContext is LoginViewModel vm && sender is PasswordBox pb)
+            if (DataContext is LoginViewModel vm && sender is System.Windows.Controls.PasswordBox pb)
             {
                 vm.MotDePasse = pb.Password;
             }
         }
-
     }
 }

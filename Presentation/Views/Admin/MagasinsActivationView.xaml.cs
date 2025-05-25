@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace GestionCollectes.Presentation.Views.Admin
 {
     /// <summary>
-    /// Logique d'interaction pour MagasinsActifsView.xaml
+    /// Logique d'interaction pour MagasinsActivationView.xaml
     /// </summary>
-    public partial class MagasinsActifsView : UserControl
+    public partial class MagasinsActivationView : UserControl
     {
-        public MagasinsActifsView()
+        public MagasinsActivationView()
         {
             InitializeComponent();
         }

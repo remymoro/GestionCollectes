@@ -1,18 +1,20 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using GestionCollectes.ApplicationLayer.Services;
 using GestionCollectes.Domain.Entities;
-using GestionCollectes.Presentation.Messages;
+using GestionCollectes.Presentation.Stores;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace GestionCollectes.Presentation.ViewModels.Admin
 {
     public partial class CentresViewModel : ObservableObject
     {
         private readonly CentreService _service;
+        private readonly CentreStore _store;
 
-        public ObservableCollection<Centre> Centres { get; } = new();
+        // 🔗 Plus besoin d'une ObservableCollection locale !
+        public ObservableCollection<Centre> Centres => _store.Centres;
 
         [ObservableProperty] private string nom = string.Empty;
         [ObservableProperty] private string adresse = string.Empty;
@@ -23,47 +25,33 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
         [ObservableProperty] private Centre? selectedCentre;
 
         public IRelayCommand ReinitialiserCommand { get; }
-
-
-
-
-        // N'oublie pas d'appeler NotifyCanExecuteChanged à chaque modif d’un champ :
-        partial void OnNomChanged(string value) => AddCentreCommand.NotifyCanExecuteChanged();
-        partial void OnAdresseChanged(string value) => AddCentreCommand.NotifyCanExecuteChanged();
-        partial void OnVilleChanged(string value) => AddCentreCommand.NotifyCanExecuteChanged();
-        partial void OnCodePostalChanged(string value) => AddCentreCommand.NotifyCanExecuteChanged();
-        partial void OnResponsableChanged(string value) => AddCentreCommand.NotifyCanExecuteChanged();
-        partial void OnTelephoneChanged(string value) => AddCentreCommand.NotifyCanExecuteChanged();
-
         public IAsyncRelayCommand AddCentreCommand { get; }
         public IAsyncRelayCommand<Centre> DeleteCentreCommand { get; }
         public IAsyncRelayCommand EditCentreCommand { get; }
 
-        public CentresViewModel(CentreService service)
+        public CentresViewModel(CentreService service, CentreStore store)
         {
             _service = service;
+            _store = store;
+
             AddCentreCommand = new AsyncRelayCommand(AddCentreAsync);
             DeleteCentreCommand = new AsyncRelayCommand<Centre>(DeleteCentreAsync);
             EditCentreCommand = new AsyncRelayCommand(EditCentreAsync);
             ReinitialiserCommand = new RelayCommand(ReinitialiserFormulaire);
 
-            Task.Run(LoadCentresAsync);
+            // ⚡️ À l'initialisation : charger les centres dans le store (si pas déjà fait)
+            _ = LoadCentresInStoreAsync();
         }
 
-        public async Task LoadCentresAsync()
+        // Charge et met à jour la liste dans le store, pas juste localement
+        private async Task LoadCentresInStoreAsync()
         {
             var centres = await _service.GetAllAsync();
-            App.Current.Dispatcher.Invoke(() =>
-            {
-                Centres.Clear();
-                foreach (var centre in centres)
-                    Centres.Add(centre);
-            });
+            _store.SetCentres(centres); // → Notifie automatiquement tous les ViewModels branchés
         }
 
         private async Task AddCentreAsync()
         {
-            // Vérification simple des champs obligatoires
             if (string.IsNullOrWhiteSpace(Nom) ||
                 string.IsNullOrWhiteSpace(Adresse) ||
                 string.IsNullOrWhiteSpace(Ville) ||
@@ -71,7 +59,6 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
                 string.IsNullOrWhiteSpace(Responsable) ||
                 string.IsNullOrWhiteSpace(Telephone))
             {
-                // Option : Afficher un message à l'utilisateur
                 System.Windows.MessageBox.Show("Veuillez remplir tous les champs avant d'ajouter le centre.", "Champs manquants", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
                 return;
             }
@@ -86,18 +73,18 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
                 Telephone = Telephone
             };
             await _service.AddAsync(centre);
-            await LoadCentresAsync();
 
-            WeakReferenceMessenger.Default.Send(new CentresChangedMessage());
-            // Reset des champs après ajout
+            // 🔄 Recharge à jour (et donc notification partout)
+            await LoadCentresInStoreAsync();
+
+
+            // Reset
             Nom = Adresse = Ville = CodePostal = Responsable = Telephone = string.Empty;
         }
 
         private async Task DeleteCentreAsync(Centre centre)
         {
             if (centre == null) return;
-
-            // Message de confirmation (optionnel)
             var result = System.Windows.MessageBox.Show(
                 $"Voulez-vous vraiment supprimer le centre « {centre.Nom} » ?",
                 "Suppression",
@@ -107,8 +94,7 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
             if (result != System.Windows.MessageBoxResult.Yes) return;
 
             await _service.DeleteAsync(centre.Id);
-            WeakReferenceMessenger.Default.Send(new CentresChangedMessage());
-            await LoadCentresAsync();
+            await LoadCentresInStoreAsync();
         }
 
         private async Task EditCentreAsync()
@@ -124,7 +110,7 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
             SelectedCentre.Telephone = Telephone;
 
             await _service.UpdateAsync(SelectedCentre);
-            await LoadCentresAsync();
+            await LoadCentresInStoreAsync();
 
             // Reset
             SelectedCentre = null;
@@ -148,8 +134,6 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
             }
         }
 
-
-
         private void ReinitialiserFormulaire()
         {
             Nom = string.Empty;
@@ -160,7 +144,5 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
             Telephone = string.Empty;
             SelectedCentre = null;
         }
-
-
     }
 }

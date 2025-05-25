@@ -1,8 +1,8 @@
 ﻿<UserControl x:Class="GestionCollectes.Presentation.Views.Admin.UtilisateursView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:local="clr-namespace:GestionCollectes.Presentation.Converters"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              MinWidth="900" MinHeight="550" Background="#F7F9FB">
-
     <UserControl.Resources>
         <DropShadowEffect x:Key="ShadowEffect"
                           BlurRadius="9"
@@ -10,6 +10,10 @@
                           Direction="315"
                           Opacity="0.18"
                           Color="Black"/>
+        <!-- Converter pour afficher/cacher la ComboBox Centre -->
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <!-- Si tu veux convertir null en bool (pour les boutons) -->
+        <local:NullToBoolConverter x:Key="NullToBoolConverter" />
     </UserControl.Resources>
 
     <Border Padding="30" Background="#F7F9FB" CornerRadius="16">
@@ -61,6 +65,7 @@
                             <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="180"/>
                             <DataGridTextColumn Header="Mot de passe" Binding="{Binding MotDePasseHash}" Width="180"/>
                             <DataGridTextColumn Header="Rôle" Binding="{Binding Role}" Width="120"/>
+                            <DataGridTextColumn Header="Centre" Binding="{Binding CentreId}" Width="100"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Border>
@@ -91,6 +96,15 @@
                             <ComboBox ItemsSource="{Binding RolesDisponibles}"
                                       SelectedItem="{Binding EditUtilisateur.Role, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                       Height="32" FontSize="16"/>
+
+                            <!-- ComboBox Centre, affichée uniquement si nécessaire -->
+                            <TextBlock Text="Centre" Margin="0,10,0,2" Foreground="#203040"
+                                       Visibility="{Binding AfficherChampCentre, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                            <ComboBox ItemsSource="{Binding Centres}"
+                              SelectedItem="{Binding CentreSelectionne, Mode=TwoWay}"
+                              DisplayMemberPath="Nom"
+                              Height="32" FontSize="16"
+                              Visibility="{Binding AfficherChampCentre, Converter={StaticResource BoolToVisibilityConverter}}"/>
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
@@ -108,16 +122,15 @@
                                     Padding="12,4" MinWidth="90"
                                     FontWeight="SemiBold"
                                     BorderThickness="0"
-                                   IsEnabled="{Binding SelectedUtilisateur, Converter={StaticResource NullToBoolConverter}}" />
-
-                                <Button Content="Supprimer"
+                                    IsEnabled="{Binding SelectedUtilisateur, Converter={StaticResource NullToBoolConverter}}" />
+                            <Button Content="Supprimer"
                                     Command="{Binding DeleteUtilisateurCommand}"
                                     Background="#E8505B" Foreground="White"
                                     Margin="0,0,10,0"
                                     Padding="12,4" MinWidth="90"
                                     FontWeight="SemiBold"
                                     BorderThickness="0"
-                                         IsEnabled="{Binding SelectedUtilisateur, Converter={StaticResource NullToBoolConverter}}" />
+                                    IsEnabled="{Binding SelectedUtilisateur, Converter={StaticResource NullToBoolConverter}}" />
                             <Button Content="Rafraîchir"
                                     Command="{Binding LoadUtilisateursCommand}"
                                     Background="#1B98E0" Foreground="White"
