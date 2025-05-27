@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using GestionCollectes.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,5 +19,13 @@ namespace GestionCollectes.Presentation.Navigations
         void NavigateToMagasins();
 
         void NavigateToMagasinsActivation();
+
+
+
+        void NavigateToProduitsCatalogue();
+
+
+
+
     }
 }

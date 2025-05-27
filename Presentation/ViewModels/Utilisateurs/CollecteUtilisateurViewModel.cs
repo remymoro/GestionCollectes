@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -13,6 +14,8 @@ namespace GestionCollectes.Presentation.ViewModels.Utilisateurs
     public partial class CollecteUtilisateurViewModel : ObservableObject
     {
         private readonly CollecteService _collecteService;
+        private readonly MagasinService _magasinService;
+        private readonly DashboardUtilisateurViewModel _dashboard;
 
         [ObservableProperty]
         private ObservableCollection<CollecteDisplay> collectes = new();
@@ -38,9 +41,16 @@ namespace GestionCollectes.Presentation.ViewModels.Utilisateurs
         [RelayCommand(CanExecute = nameof(CanOuvrirCollecte))]
         private void OuvrirCollecte(CollecteDisplay collecte)
         {
-            if (collecte is null || !collecte.EstAccessible) return;
-            // TODO : navigation/messagerie selon ton infra
-            // Messenger.Send(new NaviguerVersMagasinMessage(collecte.Id));
+            if (collecte is null || !collecte.EstAccessible || collecte.Entity is null) return;
+            int centreId = UtilisateurCourant?.CentreId ?? 0;
+            // Navigation locale via le parent
+            _dashboard.VueCourante = new ChoixMagasinViewModel(
+                _magasinService,
+                collecte.Entity,
+                centreId,
+                _dashboard
+            );
+            Debug.WriteLine($"[DEBUG] Collecte date début: {collecte.DateDebut}"); // <-- pour vérifier
         }
 
         private bool CanOuvrirCollecte(CollecteDisplay collecte)
@@ -49,9 +59,14 @@ namespace GestionCollectes.Presentation.ViewModels.Utilisateurs
         [RelayCommand]
         public async Task RafraichirAsync() => await LoadCollectesAsync();
 
-        public CollecteUtilisateurViewModel(CollecteService collecteService)
+        public CollecteUtilisateurViewModel(
+            CollecteService collecteService,
+            MagasinService magasinService,
+            DashboardUtilisateurViewModel dashboard)
         {
             _collecteService = collecteService;
+            _magasinService = magasinService;
+            _dashboard = dashboard;
             _ = LoadCollectesAsync();
         }
 
@@ -63,6 +78,7 @@ namespace GestionCollectes.Presentation.ViewModels.Utilisateurs
             public DateTime DateFin { get; set; }
             public string Statut { get; set; }
             public bool EstAccessible { get; set; }
+            public Collecte? Entity { get; set; }
         }
 
         private async Task LoadCollectesAsync()
@@ -75,8 +91,6 @@ namespace GestionCollectes.Presentation.ViewModels.Utilisateurs
                 var aujourdHui = DateTime.Now.Date;
                 var liste = await _collecteService.GetAllAsync();
 
-                // Filtre par centre
-               
                 Collectes = new ObservableCollection<CollecteDisplay>(
                     liste.Select(c => new CollecteDisplay
                     {
@@ -87,7 +101,8 @@ namespace GestionCollectes.Presentation.ViewModels.Utilisateurs
                         Statut = c.Statut.ToString(),
                         EstAccessible = c.Statut == StatutCollecte.EnCours
                             && aujourdHui >= c.DateDebut.Date
-                            && aujourdHui <= c.DateFin.Date
+                            && aujourdHui <= c.DateFin.Date,
+                        Entity = c
                     })
                 );
             }

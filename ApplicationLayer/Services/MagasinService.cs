@@ -19,5 +19,13 @@ namespace GestionCollectes.ApplicationLayer.Services
         public Task AddAsync(Magasin magasin) => _repo.AddAsync(magasin);
         public Task UpdateAsync(Magasin magasin) => _repo.UpdateAsync(magasin);
         public Task DeleteAsync(int id) => _repo.DeleteAsync(id);
+
+
+        public async Task<IEnumerable<Magasin>> GetMagasinsActifsParCentreAsync(int centreId)
+        {
+            var tous = await _repo.GetAllAsync();
+            return tous.Where(m => m.CentreId == centreId && m.Actif);
+        }
+
     }
 }

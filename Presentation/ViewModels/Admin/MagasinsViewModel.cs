@@ -64,13 +64,19 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
                 && CentreSelectionne != null;
         }
 
+
+
         private async void AjouterMagasin()
         {
-            if (CentreSelectionne == null) return;
+            if (CentreSelectionne == null)
+                return;
 
             string? savedImagePath = null;
+
+            // 1. Si une image a été sélectionnée ET existe sur le disque
             if (!string.IsNullOrWhiteSpace(NewImagePath) && File.Exists(NewImagePath))
             {
+                // 2. Dossier de destination dans ton appli
                 var dossierImages = Path.Combine(
                     AppDomain.CurrentDomain.BaseDirectory,
                     "Presentation", "Resources", "Images", "Uploaded"
@@ -78,27 +84,47 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
                 if (!Directory.Exists(dossierImages))
                     Directory.CreateDirectory(dossierImages);
 
+                // 3. Garde le nom du fichier (pour éviter écrasement, tu peux ajouter un GUID ou un timestamp si besoin)
                 var fileName = Path.GetFileName(NewImagePath);
                 var cible = Path.Combine(dossierImages, fileName);
 
-                File.Copy(NewImagePath, cible, overwrite: true);
-                savedImagePath = $"Resources/Images/Uploaded/{fileName}";
+                try
+                {
+                    // 4. Copie le fichier dans le dossier cible, écrase s'il existe déjà
+                    File.Copy(NewImagePath, cible, overwrite: true);
+                    // 5. Chemin RELATIF pour la BDD (commence bien par Presentation/…)
+                    savedImagePath = $"Presentation/Resources/Images/Uploaded/{fileName}";
+                }
+                catch (Exception ex)
+                {
+                    // Message à l'utilisateur ou log pour débogage
+                    System.Diagnostics.Debug.WriteLine("Erreur lors de la copie de l'image : " + ex.Message);
+                    // savedImagePath restera null => image par défaut
+                }
             }
 
-            var magasin = new Magasin
+            // 6. Création du magasin
+            var nouveauMagasin = new Magasin
             {
-                Nom = NewNom.Trim(),
-                Adresse = NewAdresse.Trim(),
-                ImagePath = savedImagePath,
-                CentreId = CentreSelectionne.Id
+                Nom = NewNom,
+                Adresse = NewAdresse,
+                ImagePath = savedImagePath, // Peut être null, ton converter gère l’image par défaut
+                CentreId = CentreSelectionne.Id,
+                // ...autres propriétés selon ton modèle
             };
-            await _magasinService.AddAsync(magasin);
 
-            // Reset le formulaire
+            // 7. Ajoute à la BDD via ton service ou repository
+            await _magasinService.AddAsync(nouveauMagasin);
+
+            // 8. Reset le formulaire, recharge la liste, etc.
             NewNom = string.Empty;
             NewAdresse = string.Empty;
-            NewImagePath = null;
+            NewImagePath = string.Empty;
+            // ...ton code habituel de rafraîchissement
         }
+
+
+
 
         private void ParcourirImage()
         {

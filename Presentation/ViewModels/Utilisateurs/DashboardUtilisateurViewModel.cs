@@ -5,13 +5,15 @@ namespace GestionCollectes.Presentation.ViewModels.Utilisateurs
 {
     public partial class DashboardUtilisateurViewModel : ObservableObject
     {
+        public MagasinService MagasinService { get; }
+
         [ObservableProperty]
         private ObservableObject? vueCourante;
 
-        // CONSTRUCTEUR PUBLIC !
-        public DashboardUtilisateurViewModel(CollecteService collecteService)
+        public DashboardUtilisateurViewModel(CollecteService collecteService, MagasinService magasinService)
         {
-            VueCourante = new CollecteUtilisateurViewModel(collecteService); // Vue de départ
+            MagasinService = magasinService;
+            VueCourante = new CollecteUtilisateurViewModel(collecteService, magasinService, this);
         }
     }
 }

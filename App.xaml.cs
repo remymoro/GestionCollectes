@@ -38,7 +38,16 @@ namespace GestionCollectes
             // Store Singleton
             services.AddSingleton<CentreStore>();
 
-            // Repos & Services (en Transient)
+            // Repos & Services
+
+            // Repository générique (remplace tous les AddTransient<IRepository<X>, XRepository>())
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+            // Services métiers
+            services.AddScoped<FamilleService>();
+            services.AddScoped<SousFamilleService>();
+            services.AddScoped<ProduitCatalogueService>();
+
             services.AddTransient<IRepository<Collecte>, CollecteRepository>();
             services.AddTransient<CollecteService>();
             services.AddTransient<IRepository<Utilisateur>, UtilisateurRepository>();
@@ -50,17 +59,13 @@ namespace GestionCollectes
             services.AddTransient<CollecteCentreService>();
             services.AddTransient<IRepository<CollecteCentre>, CollecteCentreRepository>();
 
-
+            // Windows (vues principales)
             services.AddTransient<LoginWindow>();
             services.AddTransient<DashboardAdminWindow>();
             services.AddTransient<DashboardCentreWindow>();
             services.AddTransient<DashboardUtilisateurWindow>();
 
-
-
-
-
-            // ViewModels Admin
+            // ViewModels Admin (navigation globale)
             services.AddTransient<CollecteViewModel>();
             services.AddTransient<CentresViewModel>();
             services.AddTransient<UtilisateursViewModel>();
@@ -68,47 +73,38 @@ namespace GestionCollectes
             services.AddTransient<MagasinsActivationViewModel>();
             services.AddTransient<DashboardAdminViewModel>();
             services.AddTransient<LoginViewModel>();
+            services.AddTransient<AdminProduitViewModel>();
+            // ViewModels Utilisateur (navigation locale)
+            services.AddTransient<DashboardUtilisateurViewModel>(sp =>
+                new DashboardUtilisateurViewModel(
+                    sp.GetRequiredService<CollecteService>(),
+                    sp.GetRequiredService<MagasinService>()
+                )
+            );
 
-            // ViewModels Utilisateur
-            services.AddTransient<DashboardUtilisateurViewModel>();
-            services.AddTransient<CollecteUtilisateurViewModel>();
-            // Ajoute ici MagasinSelectionViewModel ou autres ViewModels utilisateur si besoin
+            // (Pas besoin d’injecter CollecteUtilisateurViewModel ou ChoixMagasinViewModel : ils sont instanciés à la main dans le parent)
 
-
-
-
-            // Ajoute aussi CollecteService (si pas déjà présent)
-            services.AddTransient<CollecteService>();
-
-            // Injection du ViewModel ParticipationCollecteMagasin avec tous ses services
-           
-
-
-
-            // INavigationService pour Admin (et Utilisateur si partagé)
+            // Navigation globale (pour l’admin)
             services.AddSingleton<INavigationService, NavigationService>(provider =>
                 new NavigationService(
                     () => provider.GetRequiredService<CollecteViewModel>(),
                     () => provider.GetRequiredService<CentresViewModel>(),
                     () => provider.GetRequiredService<UtilisateursViewModel>(),
                     () => provider.GetRequiredService<MagasinsViewModel>(),
-                    () => provider.GetRequiredService<MagasinsActivationViewModel>()
+                    () => provider.GetRequiredService<MagasinsActivationViewModel>(),
+                     () => provider.GetRequiredService<AdminProduitViewModel>()
                 )
             );
 
-
-
-
-
+            // Navigation entre fenêtres principales
             services.AddSingleton<IWindowNavigationService, WindowNavigationService>(provider =>
-                        new WindowNavigationService(
-                            () => provider.GetRequiredService<LoginWindow>(),
-                            () => provider.GetRequiredService<DashboardAdminWindow>(),
-                            () => provider.GetRequiredService<DashboardCentreWindow>(),
-                            () => provider.GetRequiredService<DashboardUtilisateurWindow>()
-                        )
-                    );
-
+                new WindowNavigationService(
+                    () => provider.GetRequiredService<LoginWindow>(),
+                    () => provider.GetRequiredService<DashboardAdminWindow>(),
+                    () => provider.GetRequiredService<DashboardCentreWindow>(),
+                    () => provider.GetRequiredService<DashboardUtilisateurWindow>()
+                )
+            );
 
             ServiceProvider = services.BuildServiceProvider();
 
@@ -116,7 +112,7 @@ namespace GestionCollectes
             await InitCentresStoreAsync();
 
             // Démarre l'UI
-            var login = new Presentation.Views.LoginWindow();
+            var login = ServiceProvider.GetRequiredService<LoginWindow>();
             login.Show();
 
             base.OnStartup(e);

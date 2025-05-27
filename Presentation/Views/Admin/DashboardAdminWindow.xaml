@@ -25,6 +25,10 @@
         <DataTemplate DataType="{x:Type admin:MagasinsActivationViewModel}">
             <views:MagasinsActivationView />
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type admin:AdminProduitViewModel}">
+            <views:AdminProduitView />
+        </DataTemplate>
     </Window.Resources>
 
     <Grid>
@@ -74,6 +78,13 @@
                     Command="{Binding NavigateCommand}"
                     CommandParameter="MagasinsActivation"
                     Margin="10"/>
+
+                    <Button Content="Catalogue Produits"
+                Style="{StaticResource NavButtonStyle}"
+                Command="{Binding NavigateCommand}"
+                CommandParameter="ProduitsCatalogue"
+                Margin="10"/>
+
 
             <StackPanel VerticalAlignment="Bottom" Margin="10,0,10,10">
                 <Button Content="Déconnexion" Style="{StaticResource NavButtonStyle}"/>

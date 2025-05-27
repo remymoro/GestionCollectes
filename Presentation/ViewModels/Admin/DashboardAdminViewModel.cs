@@ -49,6 +49,9 @@ namespace GestionCollectes.Presentation.ViewModels.Admin
                 case "MagasinsActivation":
                     _navigationService.NavigateToMagasinsActivation();
                     break;
+
+                case "ProduitsCatalogue": _navigationService.NavigateToProduitsCatalogue(); 
+                    break;
                 default:
                     _navigationService.NavigateToCollectes();
                     break;

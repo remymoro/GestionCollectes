@@ -13,6 +13,10 @@ namespace GestionCollectes.Infrastructure.Data
         public DbSet<Magasin> Magasins { get; set; }
         public DbSet<CollecteCentre> CollecteCentres { get; set; } // AJOUT table de liaison
 
+        public DbSet<Famille> Familles { get; set; }
+        public DbSet<SousFamille> SousFamilles { get; set; }
+        public DbSet<ProduitCatalogue> ProduitsCatalogue { get; set; }
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
@@ -45,6 +49,45 @@ namespace GestionCollectes.Infrastructure.Data
                 .WithMany(c => c.CollecteCentres)
                 .HasForeignKey(cc => cc.CentreId);
             // ========================================================
+
+
+            // ================= Famille / SousFamille / ProduitCatalogue =================
+
+            // Unicité du nom de famille
+            modelBuilder.Entity<Famille>()
+                .HasIndex(f => f.Nom)
+                .IsUnique();
+
+            // Sous-famille liée à une famille
+            modelBuilder.Entity<SousFamille>()
+                .HasOne(sf => sf.Famille)
+                .WithMany(f => f.SousFamilles)
+                .HasForeignKey(sf => sf.FamilleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Unicité du nom de sous-famille dans une même famille
+            modelBuilder.Entity<SousFamille>()
+                .HasIndex(sf => new { sf.Nom, sf.FamilleId })
+                .IsUnique();
+
+            // ProduitCatalogue lié à famille et sous-famille
+            modelBuilder.Entity<ProduitCatalogue>()
+                .HasOne(p => p.Famille)
+                .WithMany()
+                .HasForeignKey(p => p.FamilleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ProduitCatalogue>()
+                .HasOne(p => p.SousFamille)
+                .WithMany(sf => sf.Produits)
+                .HasForeignKey(p => p.SousFamilleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Unicité du code-barres
+            modelBuilder.Entity<ProduitCatalogue>()
+                .HasIndex(p => p.CodeBarre)
+                .IsUnique();
+
         }
     }
 }

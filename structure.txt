@@ -1,14 +1,22 @@
 ﻿|-- ApplicationLayer
    |-- Services
       |-- CentreService.cs
+      |-- CollecteCentreService.cs
       |-- CollecteService.cs
+      |-- FamilleService.cs
       |-- MagasinService.cs
+      |-- ProduitCatalogueService.cs
+      |-- SousFamilleService.cs
       |-- UtilisateurService.cs
 |-- Domain
    |-- Entities
       |-- Centre.cs
       |-- Collecte.cs
+      |-- CollecteCentre.cs
+      |-- Famille.cs
       |-- Magasin.cs
+      |-- ProduitCatalogue.cs
+      |-- SousFamille.cs
       |-- Utilisateur.cs
    |-- Enums
       |-- RoleUtilisateur.cs
@@ -21,18 +29,27 @@
       |-- DesignTimeDbContextFactory.cs
    |-- Repositories
       |-- CentreRepository.cs
+      |-- CollecteCentre.cs
       |-- CollecteRepository.cs
       |-- MagasinRepository.cs
+      |-- Repository.cs
       |-- UtilisateurRepository.cs
 |-- Presentation
    |-- Converters
       |-- BoolToOpacityConverter.cs
+      |-- BoolToVisibilityConverter.cs
       |-- ImagePathToBitmapConverter.cs
       |-- NullToBoolConverter.cs
       |-- PathToImageSourceConverter.cs
       |-- StringNullOrEmptyToVisibilityConverter.cs
+      |-- ZeroToVisibilityConverter.cs
    |-- Messages
       |-- CentresChangedMessage.cs
+   |-- Navigations
+      |-- INavigationService.cs
+      |-- IWindowNavigationService.cs
+      |-- NavigationService.cs
+      |-- WindowNavigationService.cs
    |-- Resources
       |-- Images
          |-- Uploaded
@@ -42,27 +59,32 @@
       |-- CentreStore.cs
    |-- ViewModels
       |-- Admin
+         |-- AdminProduitViewModel.cs
+         |-- CentreCheckable.cs
          |-- CentresViewModel.cs
          |-- CollecteViewModel.cs
          |-- DashboardAdminViewModel.cs
-         |-- MagasinsActifsViewModel.cs
+         |-- MagasinsActivationViewModel.cs
          |-- MagasinsViewModel.cs
          |-- UtilisateursViewModel.cs
       |-- Utilisateurs
+         |-- ChoixMagasinViewModel.cs
          |-- CollecteUtilisateurViewModel.cs
          |-- DashboardUtilisateurViewModel.cs
       |-- LoginViewModel.cs
       |-- OldRelayCommand.cs
    |-- Views
       |-- Admin
+         |-- AdminProduitView.xaml
+         |-- AdminProduitView.xaml.cs
          |-- CentresView.xaml
          |-- CentresView.xaml.cs
          |-- CollectesView.xaml
          |-- CollectesView.xaml.cs
          |-- DashboardAdminWindow.xaml
          |-- DashboardAdminWindow.xaml.cs
-         |-- MagasinsActifsView.xaml
-         |-- MagasinsActifsView.xaml.cs
+         |-- MagasinsActivationView.xaml
+         |-- MagasinsActivationView.xaml.cs
          |-- MagasinsView.xaml
          |-- MagasinsView.xaml.cs
          |-- UtilisateursView.xaml
@@ -71,6 +93,8 @@
          |-- DashboardCentreWindow.xaml
          |-- DashboardCentreWindow.xaml.cs
       |-- Utilisateurs
+         |-- ChoixMagasinView.xaml
+         |-- ChoixMagasinView.xaml.cs
          |-- CollecteUtilisateurView.xaml
          |-- CollecteUtilisateurView.xaml.cs
          |-- DashboardUtilisateurWindow.xaml

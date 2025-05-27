@@ -7,17 +7,16 @@
         Height="700" Width="1100"
         Background="#F6F8FB"
         WindowStartupLocation="CenterScreen">
-
     <Window.Resources>
-        <!-- DataTemplate pour lier le VM CollecteUtilisateurViewModel à la vue CollecteUtilisateurView -->
         <DataTemplate DataType="{x:Type vm:CollecteUtilisateurViewModel}">
             <views:CollecteUtilisateurView />
         </DataTemplate>
-        <!-- (Ajoute ici d’autres DataTemplate pour d’autres modules/vues au besoin) -->
+        <DataTemplate DataType="{x:Type vm:ChoixMagasinViewModel}">
+            <views:ChoixMagasinView />
+        </DataTemplate>
+        <!-- Ajoute d'autres DataTemplates au besoin -->
     </Window.Resources>
-
     <Border Padding="30" Background="White" CornerRadius="18">
-        <!-- Affichage dynamique en fonction de la propriété VueCourante -->
         <ContentControl Content="{Binding VueCourante}" />
     </Border>
 </Window>
