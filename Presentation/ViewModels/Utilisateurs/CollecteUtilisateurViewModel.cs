@@ -16,6 +16,8 @@ namespace GestionCollectes.Presentation.ViewModels.Utilisateurs
         private readonly CollecteService _collecteService;
         private readonly MagasinService _magasinService;
         private readonly DashboardUtilisateurViewModel _dashboard;
+        private readonly ICurrentUserService _currentUserService;
+        // private readonly IServiceProvider _serviceProvider; // Removed IServiceProvider
 
         [ObservableProperty]
         private ObservableCollection<CollecteDisplay> collectes = new();
@@ -26,16 +28,17 @@ namespace GestionCollectes.Presentation.ViewModels.Utilisateurs
         [ObservableProperty]
         private string? erreurChargement;
 
-        public Utilisateur? UtilisateurCourant => App.UtilisateurCourant;
+        // Replaced App.UtilisateurCourant with _currentUserService.CurrentUser
+        public Utilisateur? UtilisateurCourant => _currentUserService.CurrentUser; 
 
         public string MessageBienvenue =>
-            UtilisateurCourant == null
+            _currentUserService.CurrentUser == null // Used _currentUserService
                 ? "Bienvenue !"
-                : $"Bonjour, {UtilisateurCourant.Nom} ({UtilisateurCourant.Role})"
-                    + (UtilisateurCourant.CentreId != null
-                        ? $" - Centre {UtilisateurCourant.Nom}"
-                        : (UtilisateurCourant.CentreId.HasValue
-                            ? $" - Centre {UtilisateurCourant.CentreId.Value}"
+                : $"Bonjour, {_currentUserService.CurrentUser.Nom} ({_currentUserService.CurrentUser.Role})"
+                    + (_currentUserService.CurrentUser.CentreId != null
+                        ? $" - Centre {_currentUserService.CurrentUser.Nom}" // Assuming Nom refers to Centre Name if CentreId is present, this logic might need re-evaluation based on entity structure
+                        : (_currentUserService.CurrentUser.CentreId.HasValue
+                            ? $" - Centre {_currentUserService.CurrentUser.CentreId.Value}"
                             : ""));
 
         [RelayCommand(CanExecute = nameof(CanOuvrirCollecte))]
@@ -44,8 +47,9 @@ namespace GestionCollectes.Presentation.ViewModels.Utilisateurs
             if (collecte is null || !collecte.EstAccessible || collecte.Entity is null) return;
             int centreId = UtilisateurCourant?.CentreId ?? 0;
             // Navigation locale via le parent
+            // Pass _magasinService (already injected into this VM) to ChoixMagasinViewModel
             _dashboard.VueCourante = new ChoixMagasinViewModel(
-                _magasinService,
+                _magasinService, // Use the injected MagasinService
                 collecte.Entity,
                 centreId,
                 _dashboard
@@ -62,11 +66,15 @@ namespace GestionCollectes.Presentation.ViewModels.Utilisateurs
         public CollecteUtilisateurViewModel(
             CollecteService collecteService,
             MagasinService magasinService,
-            DashboardUtilisateurViewModel dashboard)
+            DashboardUtilisateurViewModel dashboard,
+            ICurrentUserService currentUserService) // Removed IServiceProvider
+            // IServiceProvider serviceProvider) 
         {
             _collecteService = collecteService;
             _magasinService = magasinService;
             _dashboard = dashboard;
+            _currentUserService = currentUserService;
+            // _serviceProvider = serviceProvider; // Removed IServiceProvider
             _ = LoadCollectesAsync();
         }
 
