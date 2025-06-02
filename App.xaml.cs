@@ -23,7 +23,7 @@ namespace GestionCollectes
     public partial class App : Application
     {
         public static IServiceProvider ServiceProvider { get; private set; }
-        public static Utilisateur? UtilisateurCourant { get; set; }
+        // public static Utilisateur? UtilisateurCourant { get; set; } // Removed
 
         protected override async void OnStartup(StartupEventArgs e)
         {
@@ -32,11 +32,14 @@ namespace GestionCollectes
             var connectionString = "server=localhost;port=3306;database=projet_restos_coeur;user=restos;password=restos123;SslMode=none;";
             services.AddDbContext<AppDbContext>(options =>
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)),
-                ServiceLifetime.Transient
+                ServiceLifetime.Scoped // Changed DbContext lifetime to Scoped
             );
 
             // Store Singleton
             services.AddSingleton<CentreStore>();
+
+            // Service for current user (Singleton to hold state across the app)
+            services.AddSingleton<ICurrentUserService, CurrentUserService>();
 
             // Repos & Services
 
@@ -48,16 +51,16 @@ namespace GestionCollectes
             services.AddScoped<SousFamilleService>();
             services.AddScoped<ProduitCatalogueService>();
 
-            services.AddTransient<IRepository<Collecte>, CollecteRepository>();
-            services.AddTransient<CollecteService>();
-            services.AddTransient<IRepository<Utilisateur>, UtilisateurRepository>();
-            services.AddTransient<UtilisateurService>();
-            services.AddTransient<IRepository<Magasin>, MagasinRepository>();
-            services.AddTransient<MagasinService>();
-            services.AddSingleton<IRepository<Centre>, CentreRepository>();
-            services.AddSingleton<CentreService>();
-            services.AddTransient<CollecteCentreService>();
-            services.AddTransient<IRepository<CollecteCentre>, CollecteCentreRepository>();
+            services.AddScoped<IRepository<Collecte>, CollecteRepository>(); 
+            services.AddScoped<CollecteService>(); // Changed to Scoped
+            services.AddScoped<IRepository<Utilisateur>, UtilisateurRepository>(); 
+            services.AddScoped<UtilisateurService>(); // Changed to Scoped
+            services.AddScoped<IRepository<Magasin>, MagasinRepository>(); 
+            services.AddScoped<MagasinService>(); // Changed to Scoped
+            services.AddScoped<IRepository<Centre>, CentreRepository>(); 
+            services.AddScoped<CentreService>(); // Changed to Scoped
+            services.AddScoped<CollecteCentreService>(); // Changed to Scoped
+            services.AddScoped<ICollecteCentreRepository, CollecteCentreRepository>(); 
 
             // Windows (vues principales)
             services.AddTransient<LoginWindow>();
@@ -78,11 +81,14 @@ namespace GestionCollectes
             services.AddTransient<DashboardUtilisateurViewModel>(sp =>
                 new DashboardUtilisateurViewModel(
                     sp.GetRequiredService<CollecteService>(),
-                    sp.GetRequiredService<MagasinService>()
+                    sp.GetRequiredService<MagasinService>(),
+                    sp.GetRequiredService<ICurrentUserService>() // IServiceProvider (sp) no longer passed
                 )
             );
+            services.AddTransient<CollecteUtilisateurViewModel>(); 
+            services.AddTransient<ChoixMagasinViewModel>();     // Added registration
 
-            // (Pas besoin d’injecter CollecteUtilisateurViewModel ou ChoixMagasinViewModel : ils sont instanciés à la main dans le parent)
+            // (Pas besoin d’injecter CollecteUtilisateurViewModel ou ChoixMagasinViewModel : ils sont instanciés à la main dans le parent) --> This comment is now outdated but will be kept for now.
 
             // Navigation globale (pour l’admin)
             services.AddSingleton<INavigationService, NavigationService>(provider =>
@@ -106,14 +112,31 @@ namespace GestionCollectes
                 )
             );
 
-            ServiceProvider = services.BuildServiceProvider();
+            try
+            {
+                ServiceProvider = services.BuildServiceProvider(); // Ensure ServiceProvider is initialized before use.
 
-            // Initialisation du CentreStore au démarrage
-            await InitCentresStoreAsync();
+                // Initialisation du CentreStore au démarrage
+                await InitCentresStoreAsync();
 
-            // Démarre l'UI
-            var login = ServiceProvider.GetRequiredService<LoginWindow>();
-            login.Show();
+                // Démarre l'UI
+                var login = ServiceProvider.GetRequiredService<LoginWindow>();
+                login.Show();
+            }
+            catch (Exception ex)
+            {
+                // Logique de gestion de l'exception
+                // Pour l'instant, nous allons afficher un MessageBox et ensuite fermer l'application.
+                // Dans une application réelle, on pourrait utiliser un logger plus sophistiqué.
+                MessageBox.Show(
+                    $"Une erreur critique est survenue au démarrage de l'application : {ex.Message}{Environment.NewLine}{ex.StackTrace}",
+                    "Erreur de démarrage",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+                // Envisager de fermer l'application proprement
+                // Current.Shutdown(-1); 
+            }
 
             base.OnStartup(e);
         }
@@ -123,10 +146,14 @@ namespace GestionCollectes
         /// </summary>
         private static async Task InitCentresStoreAsync()
         {
-            var centreService = ServiceProvider.GetRequiredService<CentreService>();
-            var centreStore = ServiceProvider.GetRequiredService<CentreStore>();
-            var centres = await centreService.GetAllAsync();
-            centreStore.SetCentres(centres);
+            // Créez un scope pour résoudre les services scopés
+            using (var scope = ServiceProvider.CreateScope())
+            {
+                var centreService = scope.ServiceProvider.GetRequiredService<CentreService>();
+                var centreStore = scope.ServiceProvider.GetRequiredService<CentreStore>(); // CentreStore est Singleton, donc ok de le résoudre ici aussi.
+                var centres = await centreService.GetAllAsync();
+                centreStore.SetCentres(centres);
+            }
         }
     }
 }

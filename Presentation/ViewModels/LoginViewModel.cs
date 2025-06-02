@@ -13,6 +13,7 @@ namespace GestionCollectes.Presentation.ViewModels
     {
         private readonly UtilisateurService _utilisateurService;
         private readonly IWindowNavigationService _windowNavigationService;
+        private readonly ICurrentUserService _currentUserService; // Added ICurrentUserService
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -39,10 +40,14 @@ namespace GestionCollectes.Presentation.ViewModels
 
         public ICommand ConnexionCommand { get; }
 
-        public LoginViewModel(UtilisateurService utilisateurService, IWindowNavigationService windowNavigationService)
+        public LoginViewModel(
+            UtilisateurService utilisateurService, 
+            IWindowNavigationService windowNavigationService,
+            ICurrentUserService currentUserService) // Injected ICurrentUserService
         {
             _utilisateurService = utilisateurService;
             _windowNavigationService = windowNavigationService;
+            _currentUserService = currentUserService; // Initialized ICurrentUserService
             ConnexionCommand = new OldRelayCommand(async _ => await ConnexionAsync());
         }
 
@@ -56,7 +61,7 @@ namespace GestionCollectes.Presentation.ViewModels
             else
             {
                 Erreur = null;
-                App.UtilisateurCourant = user;
+                _currentUserService.SetCurrentUser(user); // Use ICurrentUserService
                 _windowNavigationService.ShowDashboardForRole(user.Role);
             }
         }
