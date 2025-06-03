@@ -19,7 +19,8 @@ namespace GestionCollectes.Domain.Entities
             public StatutCollecte Statut { get; set; }
 
         // 🟢 AJOUTER ICI :
-            
+            public string Description { get; set; } = string.Empty;
+            public string Objectif { get; set; } = string.Empty;
 
 
         public ICollection<CollecteCentre> CollecteCentres { get; set; } = new List<CollecteCentre>();

@@ -1,13 +1,22 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel; // For ObservableObject
+using GestionCollectes.Domain.Entities;
 
 namespace GestionCollectes.Presentation.ViewModels.Admin
 {
     public partial class CentreCheckable : ObservableObject
     {
-        public int Id { get; set; }
-        public string Nom { get; set; }
-
         [ObservableProperty]
-        private bool isChecked;
+        private bool _isSelected;
+
+        public Centre Centre { get; }
+
+        public CentreCheckable(Centre centre)
+        {
+            Centre = centre;
+        }
+
+        public int Id => Centre.Id;
+        public string Nom => Centre.Nom;
+        // Add other properties from Centre you might want to display directly
     }
 }

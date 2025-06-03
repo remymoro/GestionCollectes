@@ -45,4 +45,24 @@
     <Resource Include="Presentation\Resources\Images\Uploaded\default-store.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ApplicationDefinition Include="Presentation\App.xaml" Condition="Exists('Presentation\App.xaml')">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="Presentation\MainWindow.xaml" Condition="Exists('Presentation\MainWindow.xaml')">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="Presentation\App.xaml.cs" Condition="Exists('Presentation\App.xaml.cs')">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Presentation\MainWindow.xaml.cs" Condition="Exists('Presentation\MainWindow.xaml.cs')">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Presentation\AssemblyInfo.cs" Condition="Exists('Presentation\AssemblyInfo.cs')" />
+  </ItemGroup>
+
 </Project>

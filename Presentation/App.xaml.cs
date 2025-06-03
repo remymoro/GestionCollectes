@@ -18,7 +18,7 @@ using GestionCollectes.Presentation.Views.Utilisateurs;
 using GestionCollectes.Presentation.Views;
 using GestionCollectes.Presentation.ViewModels;
 
-namespace GestionCollectes
+namespace GestionCollectes.Presentation
 {
     public partial class App : Application
     {
@@ -77,6 +77,7 @@ namespace GestionCollectes
             services.AddTransient<DashboardAdminViewModel>();
             services.AddTransient<LoginViewModel>();
             services.AddTransient<AdminProduitViewModel>();
+            services.AddTransient<CreerCollecteViewModel>();
             // ViewModels Utilisateur (navigation locale)
             services.AddTransient<DashboardUtilisateurViewModel>(sp =>
                 new DashboardUtilisateurViewModel(
